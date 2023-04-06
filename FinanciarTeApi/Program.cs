@@ -1,4 +1,15 @@
+using FinanciarTeApi.DataContext;
+using FinanciarTeApi.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IServiceCiudades, ServiceCiudades>();
+builder.Services.AddScoped<IServiceProvincia, ServiceProvincia>();
+builder.Services.AddScoped<IServiceCliente, ServiceCliente>();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<FinanciarTeContext>(x => x.UseSqlServer(connectionString));
 
 // Add services to the container.
 
