@@ -16,11 +16,13 @@ namespace FinanciarTeApi.Commands
 
         public string? Email { get; set; }
 
-        public string? Dirección { get; set; }
+        public string? Direccion { get; set; }
 
         public long? Numero { get; set; }
 
         public long? IdCiudad { get; set; }
+
+        public long? IdProvincia { get; set; }
 
         public long? CodigoPostal { get; set; }
 
@@ -28,7 +30,14 @@ namespace FinanciarTeApi.Commands
 
         public bool? Activo { get; set; }
 
-        public virtual ContactosAlternativo? IdContactoAlternativoNavigation { get; set; }
+        public long? idContactoAlternativo {get; set;}
+
+        public string? nombresAlt { get; set; }
+
+        public string? apellidosAlt { get; set; }
+        public long? telAlt { get; set; }
+
+        public string? emailAlt { get; set; }
 
     }
 }

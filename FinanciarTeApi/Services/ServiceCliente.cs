@@ -4,6 +4,10 @@ using FinanciarTeApi.DataTransferObjects;
 using FinanciarTeApi.Models;
 using FinanciarTeApi.Results;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.VisualBasic;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace FinanciarTeApi.Services
 {
@@ -30,13 +34,13 @@ namespace FinanciarTeApi.Services
                     Email = comando.Email,
                     IdContactoAlternativoNavigation = new ContactosAlternativo
                     {
-                        Nombres = comando.IdContactoAlternativoNavigation.Nombres,
-                        Apellidos = comando.IdContactoAlternativoNavigation.Apellidos,
-                        Telefono = comando.IdContactoAlternativoNavigation.Telefono,
-                        Email = comando.IdContactoAlternativoNavigation.Email
+                        Nombres = comando.nombresAlt,
+                        Apellidos = comando.apellidosAlt,
+                        Telefono = comando.telAlt,
+                        Email = comando.emailAlt
                     },
                     IdCiudad = comando.IdCiudad,
-                    Dirección = comando.Dirección,
+                    Direccion = comando.Direccion,
                     Numero = comando.Numero,
                     CodigoPostal = comando.CodigoPostal,
                     PuntosIniciales = comando.PuntosIniciales,
@@ -66,7 +70,7 @@ namespace FinanciarTeApi.Services
                                 Apellidos = cl.Apellidos,
                                 Telefono = cl.Telefono,
                                 Email = cl.Email,
-                                Dirección = cl.Dirección,
+                                Direccion = cl.Direccion,
                                 Numero = cl.Numero,
                                 CodigoPostal = cl.CodigoPostal,
                                 Ciudad = cd.Ciudad,
@@ -81,7 +85,7 @@ namespace FinanciarTeApi.Services
             return await query.ToListAsync();
         }
 
-        public async Task<DTOCliente> GetClienteByID(int id)
+        public async Task<DTOCliente> GetViewClienteByID(int id)
         {
             var cliente = await _context.Clientes
                 .AsNoTracking()
@@ -96,7 +100,7 @@ namespace FinanciarTeApi.Services
                 comando.NroDni = cliente.NroDni;
                 comando.Nombres = cliente.Nombres;
                 comando.Apellidos = cliente.Apellidos;
-                comando.Dirección = cliente.Dirección;
+                comando.Direccion = cliente.Direccion;
                 comando.Numero = cliente.Numero;
                 comando.CodigoPostal = cliente.CodigoPostal;
                 comando.Telefono = cliente.Telefono;
@@ -106,12 +110,46 @@ namespace FinanciarTeApi.Services
                 comando.Provincia = cliente.IdCiudadNavigation.IdProvinciaNavigation.Provincia1;
                 comando.TelContAlt = cliente.IdContactoAlternativoNavigation.Telefono;
                 comando.EmailContAlt = cliente.IdContactoAlternativoNavigation.Email;
-                comando.ContactoAlternativo = cliente.IdContactoAlternativoNavigation.Nombres + cliente.IdContactoAlternativoNavigation.Apellidos;
+                comando.ContactoAlternativo = cliente.IdContactoAlternativoNavigation.Nombres + " " + cliente.IdContactoAlternativoNavigation.Apellidos;
                 comando.PuntosIniciales = cliente.PuntosIniciales;
                 comando.FechaDeNacimiento = cliente.FechaDeNacimiento;
             }
             return comando;
 
+        }
+
+        public async Task<ComandoCliente> GetClienteByID(int id)
+        {
+            var cliente = await _context.Clientes
+                .AsNoTracking()
+                .Include(x => x.IdCiudadNavigation)
+                .Include(x => x.IdContactoAlternativoNavigation)
+                .Include(x => x.IdCiudadNavigation.IdProvinciaNavigation)
+                .FirstOrDefaultAsync(x => x.NroDni == id);
+            ComandoCliente comando = new ComandoCliente();
+
+            if (cliente != null)
+            {
+                comando.NroDni = cliente.NroDni;
+                comando.Nombres = cliente.Nombres;
+                comando.Apellidos = cliente.Apellidos;
+                comando.FechaDeNacimiento = cliente.FechaDeNacimiento;
+                comando.Telefono = cliente.Telefono;
+                comando.Email = cliente.Email;
+                comando.Direccion = cliente.Direccion;
+                comando.Numero = cliente.Numero;
+                comando.CodigoPostal = cliente.CodigoPostal;
+                comando.Activo = cliente.Activo;
+                comando.IdCiudad = cliente.IdCiudadNavigation.IdCiudad;
+                comando.IdProvincia = cliente.IdCiudadNavigation.IdProvinciaNavigation.IdProvincia;
+                comando.idContactoAlternativo = cliente.IdContactoAlternativoNavigation.IdContactoAlternativo;
+                comando.telAlt = cliente.IdContactoAlternativoNavigation.Telefono;
+                comando.emailAlt = cliente.IdContactoAlternativoNavigation.Email;
+                comando.nombresAlt = cliente.IdContactoAlternativoNavigation.Nombres;
+                comando.apellidosAlt = cliente.IdContactoAlternativoNavigation.Apellidos;
+                comando.PuntosIniciales = cliente.PuntosIniciales;
+            }
+            return comando;
 
         }
 
@@ -126,16 +164,16 @@ namespace FinanciarTeApi.Services
                 cliente.Telefono = comando.Telefono;
                 cliente.FechaDeNacimiento = comando.FechaDeNacimiento;
                 cliente.Email = comando.Email;
-                cliente.IdContactoAlternativoNavigation.Nombres = comando.IdContactoAlternativoNavigation.Nombres;
-                cliente.IdContactoAlternativoNavigation.Apellidos = comando.IdContactoAlternativoNavigation.Apellidos;
-                cliente.IdContactoAlternativoNavigation.Telefono = comando.IdContactoAlternativoNavigation.Telefono;
-                cliente.IdContactoAlternativoNavigation.Email = comando.IdContactoAlternativoNavigation.Email;
+                cliente.IdContactoAlternativoNavigation.Nombres = comando.nombresAlt;
+                cliente.IdContactoAlternativoNavigation.Apellidos = comando.apellidosAlt;
+                cliente.IdContactoAlternativoNavigation.Telefono = comando.telAlt;
+                cliente.IdContactoAlternativoNavigation.Email = comando.emailAlt;
                 cliente.IdCiudad = comando.IdCiudad;
-                cliente.Dirección = comando.Dirección;
+                cliente.Direccion = comando.Direccion;
                 cliente.Numero = comando.Numero;
                 cliente.CodigoPostal = comando.CodigoPostal;
                 cliente.PuntosIniciales = comando.PuntosIniciales;
-                cliente.Activo = true;
+                cliente.Activo = comando.Activo;
                 _context.Update(cliente);
                 await _context.SaveChangesAsync(/*_securityService.GetUserName() ?? Constantes.DefaultSecurityValues.DefaultUserName*/); //TODO: replace this with the logged in user.
             }

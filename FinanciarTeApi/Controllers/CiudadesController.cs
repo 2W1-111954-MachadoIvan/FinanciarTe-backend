@@ -14,10 +14,10 @@ namespace FinanciarTeApi.Controllers
             _ciudadesService = ciudadesService;
         }
 
-        [HttpGet("getCiudadessForComboBox")]
-        public async Task<IActionResult> GetPronvinciasForComboBoxItem()
+        [HttpGet("getCiudadesForComboBox/{id}")]
+        public async Task<IActionResult> GetCiudadesForComboBoxItem(int id)
         {
-            return Ok(await _ciudadesService.GetCiudadesForComboBox());
+            return Ok(await _ciudadesService.GetCiudadesForComboBox(id));
         }
     }
 }

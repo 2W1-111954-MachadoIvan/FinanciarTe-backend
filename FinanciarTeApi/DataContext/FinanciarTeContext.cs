@@ -97,7 +97,7 @@ public partial class FinanciarTeContext : DbContext
                 .HasColumnName("Nro_dni");
             entity.Property(e => e.Apellidos).HasMaxLength(500);
             entity.Property(e => e.CodigoPostal).HasColumnName("Codigo_postal");
-            entity.Property(e => e.Dirección).HasMaxLength(500);
+            entity.Property(e => e.Direccion).HasMaxLength(500);
             entity.Property(e => e.Email).HasMaxLength(500);
             entity.Property(e => e.FechaDeNacimiento)
                 .HasColumnType("date")

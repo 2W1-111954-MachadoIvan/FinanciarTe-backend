@@ -14,9 +14,9 @@ namespace FinanciarTeApi.Services
             _context = context;
         }
 
-        public async Task<List<ComboBoxItemDto>> GetCiudadesForComboBox()
+        public async Task<List<ComboBoxItemDto>> GetCiudadesForComboBox(int id)
         {
-            return await _context.Ciudades.AsNoTracking().Select<Ciudade, ComboBoxItemDto>(x => x).ToListAsync();
+            return await _context.Ciudades.AsNoTracking().Where(x=> x.IdProvincia == id).Select<Ciudade, ComboBoxItemDto>(x => x).ToListAsync();
         }
     }
 }

@@ -29,6 +29,12 @@ namespace FinanciarTeApi.Controllers
             return Ok(await _servicioCliente.GetClienteByID(id));
         }
 
+        [HttpGet("getViewClienteByID/{id}")]
+        public async Task<IActionResult> GetViewClienteByID(int id)
+        {
+            return Ok(await _servicioCliente.GetViewClienteByID(id));
+        }
+
         [HttpPost("postCliente")]
         public async Task<IActionResult> PostCliente([FromBody] ComandoCliente cliente)
         {

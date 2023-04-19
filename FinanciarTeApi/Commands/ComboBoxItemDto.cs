@@ -4,16 +4,17 @@ namespace FinanciarTeApi.Commands
 {
     public class ComboBoxItemDto
     {
-        public int Id { get; set; }
-        public int? IdProvincia { get; set; }
-        public string? Descripcion { get; set; }
+        public int id { get; set; }
+        public int? idFk { get; set; }
+        public string? descripcion { get; set; }
+        public int? valor { get; set; }
 
         public static implicit operator ComboBoxItemDto(Provincia entity)
         {
             return new ComboBoxItemDto
             {
-                Id = (int)entity.IdProvincia,
-                Descripcion = entity.Provincia1
+                id = (int)entity.IdProvincia,
+                descripcion = entity.Provincia1
             };
         }
 
@@ -21,9 +22,8 @@ namespace FinanciarTeApi.Commands
         {
             return new ComboBoxItemDto
             {
-                Id = (int)entity.IdCiudad,
-                Descripcion = entity.Ciudad,
-                IdProvincia = (int?)entity.IdProvincia
+                id = (int)entity.IdCiudad,
+                descripcion = entity.Ciudad
             };
         }
     }

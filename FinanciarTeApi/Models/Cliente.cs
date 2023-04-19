@@ -17,7 +17,7 @@ public partial class Cliente
 
     public string? Email { get; set; }
 
-    public string? Dirección { get; set; }
+    public string? Direccion { get; set; }
 
     public long? Numero { get; set; }
 

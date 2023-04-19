@@ -9,7 +9,8 @@ namespace FinanciarTeApi.Services
     {
         Task<List<DTOCliente>> GetClientes();
         Task<ResultadoBase> PostCliente(ComandoCliente cliente);
-        Task<DTOCliente> GetClienteByID(int id);
+        Task<DTOCliente> GetViewClienteByID(int id);
+        Task<ComandoCliente> GetClienteByID(int id);
         Task<ResultadoBase> PutCliente(ComandoCliente cliente);
         Task<ResultadoBase> DeleteCliente(int id);
     }

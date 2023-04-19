@@ -4,6 +4,6 @@ namespace FinanciarTeApi.Services
 {
     public interface IServiceCiudades
     {
-        Task<List<ComboBoxItemDto>> GetCiudadesForComboBox();
+        Task<List<ComboBoxItemDto>> GetCiudadesForComboBox(int id);
     }
 }
