@@ -1,12 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FinanciarTeApi.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FinanciarTeApi.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class TipoUsuariosController : Controller
     {
-        public IActionResult Index()
+        private readonly IServiceTiposUsuarios _tipoUsuService;
+
+        public TipoUsuariosController(IServiceTiposUsuarios tipoUsuService)
         {
-            return View();
+            _tipoUsuService = tipoUsuService;
+        }
+
+        [HttpGet("getTipoUsuForComboBox")]
+        public async Task<IActionResult> GetTipoUsuForComboBoxItem()
+        {
+            return Ok(await _tipoUsuService.GetTipoUsuForComboBox());
         }
     }
 }

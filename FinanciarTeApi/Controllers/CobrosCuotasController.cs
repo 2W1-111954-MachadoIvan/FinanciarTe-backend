@@ -1,12 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FinanciarTeApi.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FinanciarTeApi.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class CobrosCuotasController : Controller
     {
-        public IActionResult Index()
+        private readonly IServiceCobroCuotas _servicioCobroCuotas;
+
+        public CobrosCuotasController(IServiceCobroCuotas servicioCobroCuotas)
         {
-            return View();
+            _servicioCobroCuotas = servicioCobroCuotas;
+        }
+
+        [HttpGet("getCuotas/{id}")]
+        public async Task<ActionResult> GetCuotasByCliente(int id)
+        {
+            return Ok(await _servicioCobroCuotas.GetCuotasByCliente(id));
         }
     }
 }

@@ -13,7 +13,9 @@ public partial class DetalleTransaccione
 
     public decimal? Monto { get; set; }
 
+    public long? IdTransaccion { get; set; }
+
     public virtual Categoria? IdCategoriaNavigation { get; set; }
 
-    public virtual ICollection<Transaccione> Transacciones { get; } = new List<Transaccione>();
+    public virtual Transaccione? IdTransaccionNavigation { get; set; }
 }

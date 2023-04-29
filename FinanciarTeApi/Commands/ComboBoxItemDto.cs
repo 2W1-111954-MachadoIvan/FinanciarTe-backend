@@ -26,5 +26,50 @@ namespace FinanciarTeApi.Commands
                 descripcion = entity.Ciudad
             };
         }
+
+        public static implicit operator ComboBoxItemDto(EntidadesFinanciera entity)
+        {
+            return new ComboBoxItemDto
+            {
+                id = (int)entity.IdEntidadFinanciera,
+                descripcion = entity.Descripción
+            };
+        }
+
+        public static implicit operator ComboBoxItemDto(Categoria entity)
+        {
+            return new ComboBoxItemDto
+            {
+                id = (int)entity.IdCategoria,
+                descripcion = entity.Descripcion
+            };
+        }
+
+        public static implicit operator ComboBoxItemDto(TiposUsuario entity)
+        {
+            return new ComboBoxItemDto
+            {
+                id = (int)entity.IdTipoUsuario,
+                descripcion = entity.Descripción
+            };
+        }
+
+        public static implicit operator ComboBoxItemDto(TiposEntidadFinanciera entity)
+        {
+            return new ComboBoxItemDto
+            {
+                id = (int)entity.IdTipoEntidad,
+                descripcion = entity.Descripción
+            };
+        }
+
+        public static implicit operator ComboBoxItemDto(TiposTransaccion entity)
+        {
+            return new ComboBoxItemDto
+            {
+                id = (int)entity.IdTipoTransaccion,
+                descripcion = entity.Descripción
+            };
+        }
     }
 }

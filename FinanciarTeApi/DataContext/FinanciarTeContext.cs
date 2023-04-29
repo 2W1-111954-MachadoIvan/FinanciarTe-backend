@@ -169,11 +169,16 @@ public partial class FinanciarTeContext : DbContext
             entity.Property(e => e.IdDetalleTransacciones).HasColumnName("id_Detalle_transacciones");
             entity.Property(e => e.Detalle).HasMaxLength(500);
             entity.Property(e => e.IdCategoria).HasColumnName("id_Categoria");
+            entity.Property(e => e.IdTransaccion).HasColumnName("id_Transaccion");
             entity.Property(e => e.Monto).HasColumnType("decimal(10, 2)");
 
             entity.HasOne(d => d.IdCategoriaNavigation).WithMany(p => p.DetalleTransacciones)
                 .HasForeignKey(d => d.IdCategoria)
                 .HasConstraintName("FK_DETALLE_TRANSACCIONES_CATEGORIAS");
+
+            entity.HasOne(d => d.IdTransaccionNavigation).WithMany(p => p.DetalleTransacciones)
+                .HasForeignKey(d => d.IdTransaccion)
+                .HasConstraintName("FK_DETALLE_TRANSACCIONES_TRANSACCIONES");
         });
 
         modelBuilder.Entity<EntidadesFinanciera>(entity =>
@@ -305,12 +310,7 @@ public partial class FinanciarTeContext : DbContext
             entity.Property(e => e.FechaTransaccion)
                 .HasColumnType("datetime")
                 .HasColumnName("Fecha_transaccion");
-            entity.Property(e => e.IdDetalleTransacciones).HasColumnName("id_Detalle_Transacciones");
             entity.Property(e => e.IdEntidadFinanciera).HasColumnName("id_Entidad_Financiera");
-
-            entity.HasOne(d => d.IdDetalleTransaccionesNavigation).WithMany(p => p.Transacciones)
-                .HasForeignKey(d => d.IdDetalleTransacciones)
-                .HasConstraintName("FK_TRANSACCIONES_DETALLE_TRANSACCIONES");
 
             entity.HasOne(d => d.IdEntidadFinancieraNavigation).WithMany(p => p.Transacciones)
                 .HasForeignKey(d => d.IdEntidadFinanciera)

@@ -7,6 +7,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IServiceCiudades, ServiceCiudades>();
 builder.Services.AddScoped<IServiceProvincia, ServiceProvincia>();
 builder.Services.AddScoped<IServiceCliente, ServiceCliente>();
+builder.Services.AddScoped<IServiceDetalleTransacciones, ServiceDetalleTransacciones>();
+builder.Services.AddScoped<IServiceTransacciones, ServiceTransacciones>();
+builder.Services.AddScoped<IServiceCategoria, ServiceCategoria>();
+builder.Services.AddScoped<IServiceEntidadesFinancieras, ServiceEntidadesFinancieras>();
+builder.Services.AddScoped<IServiceTiposEntidadFinanciera, ServiceTiposEntidadFinanciera>();
+builder.Services.AddScoped<IServiceTiposUsuarios, ServiceTiposUsuarios>();
+builder.Services.AddScoped<IServiceTipoTransaccion, ServiceTipoTransaccion>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FinanciarTeContext>(x => x.UseSqlServer(connectionString));

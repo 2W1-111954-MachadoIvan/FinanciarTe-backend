@@ -1,12 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FinanciarTeApi.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FinanciarTeApi.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class EntidadesFinancierasController : Controller
     {
-        public IActionResult Index()
+        private readonly IServiceEntidadesFinancieras _entFinService;
+
+        public EntidadesFinancierasController(IServiceEntidadesFinancieras entFinService)
         {
-            return View();
+            _entFinService = entFinService;
+        }
+
+        [HttpGet("getEntFinForComboBox")]
+        public async Task<IActionResult> GetPronvinciasForComboBoxItem()
+        {
+            return Ok(await _entFinService.GetEntFinForComboBox());
         }
     }
 }
