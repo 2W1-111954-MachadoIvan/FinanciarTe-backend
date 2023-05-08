@@ -1,4 +1,5 @@
-﻿using FinanciarTeApi.Services;
+﻿using FinanciarTeApi.Commands;
+using FinanciarTeApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanciarTeApi.Controllers
@@ -18,6 +19,18 @@ namespace FinanciarTeApi.Controllers
         public async Task<ActionResult> GetCuotasByCliente(int id)
         {
             return Ok(await _servicioCobroCuotas.GetCuotasByCliente(id));
+        }
+
+        [HttpPost("registrarCuotas/")]
+        public async Task<ActionResult> RegistrarCuotas([FromBody] ComandoCobroCuota comando)
+        {
+            return Ok(await _servicioCobroCuotas.RegistrarCuotas(comando));
+        }
+
+        [HttpPut("modificarCuota/")]
+        public async Task<ActionResult> ModificarCuotas([FromBody] ComandoCobroCuota comando)
+        {
+            return Ok(await _servicioCobroCuotas.ModificarCuota(comando));
         }
     }
 }

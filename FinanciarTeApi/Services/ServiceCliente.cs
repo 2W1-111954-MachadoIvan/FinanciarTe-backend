@@ -4,10 +4,6 @@ using FinanciarTeApi.DataTransferObjects;
 using FinanciarTeApi.Models;
 using FinanciarTeApi.Results;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using Microsoft.VisualBasic;
-using System.ComponentModel;
-using System.Globalization;
 
 namespace FinanciarTeApi.Services
 {

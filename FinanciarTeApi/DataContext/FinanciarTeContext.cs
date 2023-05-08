@@ -128,16 +128,22 @@ public partial class FinanciarTeContext : DbContext
                 .HasColumnType("date")
                 .HasColumnName("Fecha_pago");
             entity.Property(e => e.IdCliente).HasColumnName("id_Cliente");
+            entity.Property(e => e.IdDetalleTransaccion).HasColumnName("id_Detalle_Transaccion");
             entity.Property(e => e.IdPrestamo).HasColumnName("id_Prestamo");
             entity.Property(e => e.IdPuntos).HasColumnName("id_puntos");
             entity.Property(e => e.IdTransaccion).HasColumnName("id_Transaccion");
             entity.Property(e => e.MontoAbonado)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Monto_abonado");
+            entity.Property(e => e.NumeroCuota).HasColumnName("Numero_Cuota");
 
             entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.CobrosCuota)
                 .HasForeignKey(d => d.IdCliente)
                 .HasConstraintName("FK_COBROS_CUOTAS_CLIENTES");
+
+            entity.HasOne(d => d.IdDetalleTransaccionNavigation).WithMany(p => p.CobrosCuota)
+                .HasForeignKey(d => d.IdDetalleTransaccion)
+                .HasConstraintName("FK_COBROS_CUOTAS_DETALLE_TRANSACCIONES");
 
             entity.HasOne(d => d.IdPuntosNavigation).WithMany(p => p.CobrosCuota)
                 .HasForeignKey(d => d.IdPuntos)

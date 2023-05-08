@@ -11,6 +11,8 @@ public partial class CobrosCuota
 
     public long? IdPrestamo { get; set; }
 
+    public long? NumeroCuota { get; set; }
+
     public decimal? MontoAbonado { get; set; }
 
     public DateTime? FechaPago { get; set; }
@@ -19,9 +21,13 @@ public partial class CobrosCuota
 
     public long? IdTransaccion { get; set; }
 
+    public long? IdDetalleTransaccion { get; set; }
+
     public long? IdPuntos { get; set; }
 
     public virtual Cliente? IdClienteNavigation { get; set; }
+
+    public virtual DetalleTransaccione? IdDetalleTransaccionNavigation { get; set; }
 
     public virtual Punto? IdPuntosNavigation { get; set; }
 
