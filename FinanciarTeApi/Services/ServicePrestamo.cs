@@ -27,7 +27,7 @@ namespace FinanciarTeApi.Services
             var query = _context.Prestamos
                         .Where(p => p.IdCliente == id)
                         .GroupJoin(
-                            _context.CobrosCuotas,
+                            _context.Cuotas,
                             p => p.IdPrestamo,
                             cc => cc.IdPrestamo,
                             (p, cc) => new { Prestamo = p, CobrosCuotas = cc.DefaultIfEmpty() }
@@ -52,9 +52,9 @@ namespace FinanciarTeApi.Services
 
             var refinanciado = await _context.Prestamos.Where(c => c.IdPrestamoRefinanciado == id).FirstOrDefaultAsync();
 
-            List<DTOCobroCuota> cuotas = await _context.CobrosCuotas
+            List<DTOCuota> cuotas = await _context.Cuotas
                                       .Where(c => c.IdPrestamo == id)
-                                      .Select(c => new DTOCobroCuota
+                                      .Select(c => new DTOCuota
                                       {
                                           idCobroCuota = c.IdCobroCuota,
                                           idPrestamo = c.IdPrestamo,

@@ -1,6 +1,6 @@
 ﻿namespace FinanciarTeApi.DataTransferObjects
 {
-    public class DTOCobroCuota
+    public class DTOCuota
     {
         public long? idCobroCuota { get; set; }
         public long? idCliente { get; set; }

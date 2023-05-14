@@ -11,5 +11,5 @@ public partial class Punto
 
     public long? CantidadPuntos { get; set; }
 
-    public virtual ICollection<CobrosCuota> CobrosCuota { get; } = new List<CobrosCuota>();
+    public virtual ICollection<Cuota> Cuota { get; } = new List<Cuota>();
 }

@@ -25,6 +25,8 @@ public partial class Prestamo
 
     public long? IdTransaccion { get; set; }
 
+    public virtual ICollection<Cuota> Cuota { get; } = new List<Cuota>();
+
     public virtual Cliente? IdClienteNavigation { get; set; }
 
     public virtual Scoring? IdScoringNavigation { get; set; }

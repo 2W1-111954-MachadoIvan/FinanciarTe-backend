@@ -17,6 +17,6 @@
         public long? montoOtorgado { get; set; }
         public string estado { get; set; }
         public decimal? saldoPendiente { get; set; }
-        public List<DTOCobroCuota>? cuotas { get; set; } = new List<DTOCobroCuota>();
+        public List<DTOCuota>? cuotas { get; set; } = new List<DTOCuota>();
     }
 }

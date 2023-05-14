@@ -87,7 +87,7 @@ namespace FinanciarTeApi.Services
                 .AsNoTracking()
                 .Include(x => x.IdCiudadNavigation)
                 .Include(x => x.IdContactoAlternativoNavigation)
-                .Include(x => x.IdCiudadNavigation.IdProvinciaNavigation)
+                //.Include(x => x.IdCiudadNavigation.IdProvinciaNavigation)
                 .FirstOrDefaultAsync(x => x.NroDni == id);
             DTOCliente comando = new DTOCliente();
 

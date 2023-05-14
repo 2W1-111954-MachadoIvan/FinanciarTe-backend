@@ -8,10 +8,10 @@ using System.Data;
 
 namespace FinanciarTeApi.Services
 {
-    public class ServiceCobroCuotas : IServiceCobroCuotas
+    public class ServiceCuotas : IServiceCuotas
     {
         private readonly FinanciarTeContext _context;
-        public ServiceCobroCuotas(FinanciarTeContext context)
+        public ServiceCuotas(FinanciarTeContext context)
         {
             _context = context;
         }
@@ -20,13 +20,13 @@ namespace FinanciarTeApi.Services
             throw new NotImplementedException();
         }
 
-        public async Task<DTOCobroCuota> GetCuotaByID(int id)
+        public async Task<DTOCuota> GetCuotaByID(int id)
         {
-            var comando = await _context.CobrosCuotas
+            var comando = await _context.Cuotas
                                       .Where(c => c.IdCobroCuota == id)
                                       .FirstOrDefaultAsync();
 
-            DTOCobroCuota cuota = new DTOCobroCuota();
+            DTOCuota cuota = new DTOCuota();
 
             if(comando != null)
             {
@@ -44,11 +44,11 @@ namespace FinanciarTeApi.Services
             return cuota;
         }
 
-        public async Task<List<DTOCobroCuota>> GetCuotasByCliente(int id)
+        public async Task<List<DTOCuota>> GetCuotasByCliente(int id)
         {
-            List<DTOCobroCuota> cuotas = await _context.CobrosCuotas
+            List<DTOCuota> cuotas = await _context.Cuotas
                                       .Where(c => c.IdCliente == id)
-                                      .Select(c => new DTOCobroCuota
+                                      .Select(c => new DTOCuota
                                       {
                                           idCobroCuota = c.IdCobroCuota,
                                           idCliente = c.IdCliente,
@@ -63,7 +63,7 @@ namespace FinanciarTeApi.Services
             return cuotas;
         }
 
-        public async Task<ResultadoBase> RegistrarCuotas(ComandoCobroCuota comando)
+        public async Task<ResultadoBase> RegistrarCuotas(ComandoCuota comando)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace FinanciarTeApi.Services
                     await _context.DetalleTransacciones.AddAsync(detalles);
                     await _context.SaveChangesAsync();
 
-                    CobrosCuota cobrosCuota = new CobrosCuota();
+                    Cuota cobrosCuota = new Cuota();
                     cobrosCuota.NumeroCuota = dc.numeroCuota;
                     cobrosCuota.MontoAbonado = dc.montoAbonado;
                     cobrosCuota.IdPrestamo = dc.idPrestamo;
@@ -101,7 +101,7 @@ namespace FinanciarTeApi.Services
                     cobrosCuota.FechaPago = comando.fechaPago;
                     cobrosCuota.IdDetalleTransaccion = detalles.IdDetalleTransacciones;
 
-                    await _context.CobrosCuotas.AddAsync(cobrosCuota);
+                    await _context.Cuotas.AddAsync(cobrosCuota);
                     await _context.SaveChangesAsync();
                 }
             }
@@ -113,7 +113,7 @@ namespace FinanciarTeApi.Services
             return await Task.FromResult(new ResultadoBase { CodigoEstado = 200, Message = "Cuotas ingresadas ok"/*Constantes.DefaultMessages.DefaultSuccesMessage.ToString()*/, Ok = true });
         }
 
-        public async Task<ResultadoBase> ModificarCuota(ComandoCobroCuota comando)
+        public async Task<ResultadoBase> ModificarCuota(ComandoCuota comando)
         {
             try
             {
@@ -128,7 +128,7 @@ namespace FinanciarTeApi.Services
                     _context.DetalleTransacciones.Update(dt);
                     await _context.SaveChangesAsync();
 
-                    var cobrosCuota = await _context.CobrosCuotas.Where(c=>c.IdCobroCuota == dc.idCobroCuota).FirstOrDefaultAsync();
+                    var cobrosCuota = await _context.Cuotas.Where(c=>c.IdCobroCuota == dc.idCobroCuota).FirstOrDefaultAsync();
                     cobrosCuota.NumeroCuota = dc.numeroCuota;
                     cobrosCuota.MontoAbonado = dc.montoAbonado;
                     cobrosCuota.IdPrestamo = dc.idPrestamo;
@@ -139,7 +139,7 @@ namespace FinanciarTeApi.Services
                     cobrosCuota.FechaPago = comando.fechaPago;
                     cobrosCuota.IdDetalleTransaccion = dc.idDetalleTransaccion;
 
-                    _context.CobrosCuotas.Update(cobrosCuota);
+                    _context.Cuotas.Update(cobrosCuota);
                     await _context.SaveChangesAsync();
                 }
             }

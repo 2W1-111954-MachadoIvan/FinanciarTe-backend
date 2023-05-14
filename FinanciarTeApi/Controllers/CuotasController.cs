@@ -6,11 +6,11 @@ namespace FinanciarTeApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CobrosCuotasController : Controller
+    public class CuotasController : Controller
     {
-        private readonly IServiceCobroCuotas _servicioCobroCuotas;
+        private readonly IServiceCuotas _servicioCobroCuotas;
 
-        public CobrosCuotasController(IServiceCobroCuotas servicioCobroCuotas)
+        public CuotasController(IServiceCuotas servicioCobroCuotas)
         {
             _servicioCobroCuotas = servicioCobroCuotas;
         }
@@ -22,13 +22,13 @@ namespace FinanciarTeApi.Controllers
         }
 
         [HttpPost("registrarCuotas/")]
-        public async Task<ActionResult> RegistrarCuotas([FromBody] ComandoCobroCuota comando)
+        public async Task<ActionResult> RegistrarCuotas([FromBody] ComandoCuota comando)
         {
             return Ok(await _servicioCobroCuotas.RegistrarCuotas(comando));
         }
 
         [HttpPut("modificarCuota/")]
-        public async Task<ActionResult> ModificarCuotas([FromBody] ComandoCobroCuota comando)
+        public async Task<ActionResult> ModificarCuotas([FromBody] ComandoCuota comando)
         {
             return Ok(await _servicioCobroCuotas.ModificarCuota(comando));
         }

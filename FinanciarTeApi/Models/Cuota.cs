@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FinanciarTeApi.Models;
 
-public partial class CobrosCuota
+public partial class Cuota
 {
     public long IdCobroCuota { get; set; }
 
@@ -13,9 +13,13 @@ public partial class CobrosCuota
 
     public long? NumeroCuota { get; set; }
 
-    public decimal? MontoAbonado { get; set; }
+    public DateTime? FechaVencimiento { get; set; }
+
+    public decimal? MotoCuota { get; set; }
 
     public DateTime? FechaPago { get; set; }
+
+    public decimal? MontoAbonado { get; set; }
 
     public bool? CuotaVencida { get; set; }
 
@@ -28,6 +32,8 @@ public partial class CobrosCuota
     public virtual Cliente? IdClienteNavigation { get; set; }
 
     public virtual DetalleTransaccione? IdDetalleTransaccionNavigation { get; set; }
+
+    public virtual Prestamo? IdPrestamoNavigation { get; set; }
 
     public virtual Punto? IdPuntosNavigation { get; set; }
 

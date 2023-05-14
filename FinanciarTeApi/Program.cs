@@ -8,7 +8,7 @@ builder.Services.AddScoped<IServiceCiudades, ServiceCiudades>();
 builder.Services.AddScoped<IServiceProvincia, ServiceProvincia>();
 builder.Services.AddScoped<IServiceCliente, ServiceCliente>();
 builder.Services.AddScoped<IServicePrestamo, ServicePrestamo>();
-builder.Services.AddScoped<IServiceCobroCuotas, ServiceCobroCuotas>();
+builder.Services.AddScoped<IServiceCuotas, ServiceCuotas>();
 builder.Services.AddScoped<IServiceDetalleTransacciones, ServiceDetalleTransacciones>();
 builder.Services.AddScoped<IServiceTransacciones, ServiceTransacciones>();
 builder.Services.AddScoped<IServiceCategoria, ServiceCategoria>();

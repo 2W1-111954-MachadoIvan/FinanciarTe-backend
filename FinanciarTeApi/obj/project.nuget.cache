@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/iEhtUbcS38jLVHzsWiT4o6wBRa3p/kp20v7IPJHcQxMbgMFOhVV+4rtSxLkBZQSVf4KuGjKqF9tdwjReINLzw==",
+  "dgSpecHash": "Ix7owJlsin4bt0hx4YHGMguNbFYKQjsZtHP/J4HO9UNG/le6qV/cZh1Fo8ZVSv2IaBq/wLAcvTJp99kyMV0GGw==",
   "success": true,
-  "projectFilePath": "D:\\Documents\\GitHub\\FinanciarTe-backend\\FinanciarTeApi\\FinanciarTeApi.csproj",
+  "projectFilePath": "D:\\Documentos\\GitHub\\FinanciarTe-backend\\FinanciarTeApi\\FinanciarTeApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ivanm\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\ivanm\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",

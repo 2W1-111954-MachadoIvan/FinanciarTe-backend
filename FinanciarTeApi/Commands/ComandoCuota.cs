@@ -1,6 +1,6 @@
 ﻿namespace FinanciarTeApi.Commands
 {
-    public class ComandoCobroCuota
+    public class ComandoCuota
     {        
         public DateTime? fechaPago { get; set; }        
         public long idTransaccion { get; set; }        

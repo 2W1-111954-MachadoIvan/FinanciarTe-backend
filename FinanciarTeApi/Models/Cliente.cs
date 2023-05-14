@@ -31,7 +31,7 @@ public partial class Cliente
 
     public bool? Activo { get; set; }
 
-    public virtual ICollection<CobrosCuota> CobrosCuota { get; } = new List<CobrosCuota>();
+    public virtual ICollection<Cuota> Cuota { get; } = new List<Cuota>();
 
     public virtual Ciudade? IdCiudadNavigation { get; set; }
 

@@ -15,7 +15,7 @@ public partial class DetalleTransaccione
 
     public long? IdTransaccion { get; set; }
 
-    public virtual ICollection<CobrosCuota> CobrosCuota { get; } = new List<CobrosCuota>();
+    public virtual ICollection<Cuota> Cuota { get; } = new List<Cuota>();
 
     public virtual Categoria? IdCategoriaNavigation { get; set; }
 

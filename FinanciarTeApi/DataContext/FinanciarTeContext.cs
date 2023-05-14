@@ -22,9 +22,9 @@ public partial class FinanciarTeContext : DbContext
 
     public virtual DbSet<Cliente> Clientes { get; set; }
 
-    public virtual DbSet<CobrosCuota> CobrosCuotas { get; set; }
-
     public virtual DbSet<ContactosAlternativo> ContactosAlternativos { get; set; }
+
+    public virtual DbSet<Cuota> Cuotas { get; set; }
 
     public virtual DbSet<DetalleTransaccione> DetalleTransacciones { get; set; }
 
@@ -50,17 +50,15 @@ public partial class FinanciarTeContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=localhost;Database=FinanciarTe;User Id=ivanmachado;Password=1V4n11--4th0s--;TrustServerCertificate=true;");
+        => optionsBuilder.UseSqlServer("Server=financiartesrv1.database.windows.net,1433;Database=FinanciarTe;User Id=ivanmachadoob;Password=1V4n11--4th0s--;TrustServerCertificate=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("db_accessadmin");
-
         modelBuilder.Entity<Categoria>(entity =>
         {
-            entity.HasKey(e => e.IdCategoria).HasName("PK__Categori__A7B263BA499E6E60");
+            entity.HasKey(e => e.IdCategoria);
 
-            entity.ToTable("CATEGORIAS", "dbo");
+            entity.ToTable("CATEGORIAS");
 
             entity.Property(e => e.IdCategoria).HasColumnName("id_Categoria");
             entity.Property(e => e.Descripcion).HasMaxLength(500);
@@ -73,9 +71,9 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<Ciudade>(entity =>
         {
-            entity.HasKey(e => e.IdCiudad).HasName("PK__CIUDADES__0640366CB521AE20");
+            entity.HasKey(e => e.IdCiudad);
 
-            entity.ToTable("CIUDADES", "dbo");
+            entity.ToTable("CIUDADES");
 
             entity.Property(e => e.IdCiudad).HasColumnName("id_Ciudad");
             entity.Property(e => e.Ciudad).HasMaxLength(500);
@@ -90,7 +88,7 @@ public partial class FinanciarTeContext : DbContext
         {
             entity.HasKey(e => e.NroDni);
 
-            entity.ToTable("CLIENTES", "dbo");
+            entity.ToTable("CLIENTES");
 
             entity.Property(e => e.NroDni)
                 .ValueGeneratedNever()
@@ -116,17 +114,32 @@ public partial class FinanciarTeContext : DbContext
                 .HasConstraintName("FK_CLIENTES_CONTACTOS_ALTERNATIVOS");
         });
 
-        modelBuilder.Entity<CobrosCuota>(entity =>
+        modelBuilder.Entity<ContactosAlternativo>(entity =>
         {
-            entity.HasKey(e => e.IdCobroCuota).HasName("PK__COBROS_C__FDCFEFD33D66BD46");
+            entity.HasKey(e => e.IdContactoAlternativo);
 
-            entity.ToTable("COBROS_CUOTAS", "dbo");
+            entity.ToTable("CONTACTOS_ALTERNATIVOS");
+
+            entity.Property(e => e.IdContactoAlternativo).HasColumnName("id_Contacto_alternativo");
+            entity.Property(e => e.Apellidos).HasMaxLength(500);
+            entity.Property(e => e.Email).HasMaxLength(500);
+            entity.Property(e => e.Nombres).HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<Cuota>(entity =>
+        {
+            entity.HasKey(e => e.IdCobroCuota).HasName("PK_COBROS_CUOTAS");
+
+            entity.ToTable("CUOTAS");
 
             entity.Property(e => e.IdCobroCuota).HasColumnName("id_Cobro_Cuota");
             entity.Property(e => e.CuotaVencida).HasColumnName("Cuota_vencida");
             entity.Property(e => e.FechaPago)
                 .HasColumnType("date")
                 .HasColumnName("Fecha_pago");
+            entity.Property(e => e.FechaVencimiento)
+                .HasColumnType("date")
+                .HasColumnName("Fecha_vencimiento");
             entity.Property(e => e.IdCliente).HasColumnName("id_Cliente");
             entity.Property(e => e.IdDetalleTransaccion).HasColumnName("id_Detalle_Transaccion");
             entity.Property(e => e.IdPrestamo).HasColumnName("id_Prestamo");
@@ -135,42 +148,37 @@ public partial class FinanciarTeContext : DbContext
             entity.Property(e => e.MontoAbonado)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Monto_abonado");
+            entity.Property(e => e.MotoCuota)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Moto_cuota");
             entity.Property(e => e.NumeroCuota).HasColumnName("Numero_Cuota");
 
-            entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.CobrosCuota)
+            entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.Cuota)
                 .HasForeignKey(d => d.IdCliente)
                 .HasConstraintName("FK_COBROS_CUOTAS_CLIENTES");
 
-            entity.HasOne(d => d.IdDetalleTransaccionNavigation).WithMany(p => p.CobrosCuota)
+            entity.HasOne(d => d.IdDetalleTransaccionNavigation).WithMany(p => p.Cuota)
                 .HasForeignKey(d => d.IdDetalleTransaccion)
                 .HasConstraintName("FK_COBROS_CUOTAS_DETALLE_TRANSACCIONES");
 
-            entity.HasOne(d => d.IdPuntosNavigation).WithMany(p => p.CobrosCuota)
+            entity.HasOne(d => d.IdPrestamoNavigation).WithMany(p => p.Cuota)
+                .HasForeignKey(d => d.IdPrestamo)
+                .HasConstraintName("FK_COBROS_CUOTAS_PRESTAMOS");
+
+            entity.HasOne(d => d.IdPuntosNavigation).WithMany(p => p.Cuota)
                 .HasForeignKey(d => d.IdPuntos)
                 .HasConstraintName("FK_COBROS_CUOTAS_PUNTOS");
 
-            entity.HasOne(d => d.IdTransaccionNavigation).WithMany(p => p.CobrosCuota)
+            entity.HasOne(d => d.IdTransaccionNavigation).WithMany(p => p.Cuota)
                 .HasForeignKey(d => d.IdTransaccion)
                 .HasConstraintName("FK_COBROS_CUOTAS_TRANSACCIONES");
         });
 
-        modelBuilder.Entity<ContactosAlternativo>(entity =>
-        {
-            entity.HasKey(e => e.IdContactoAlternativo).HasName("PK__CONTACTO__EB367B4029A55C29");
-
-            entity.ToTable("CONTACTOS_ALTERNATIVOS", "dbo");
-
-            entity.Property(e => e.IdContactoAlternativo).HasColumnName("id_Contacto_alternativo");
-            entity.Property(e => e.Apellidos).HasMaxLength(500);
-            entity.Property(e => e.Email).HasMaxLength(500);
-            entity.Property(e => e.Nombres).HasMaxLength(500);
-        });
-
         modelBuilder.Entity<DetalleTransaccione>(entity =>
         {
-            entity.HasKey(e => e.IdDetalleTransacciones).HasName("PK__DETALLE___E03E150F787EC883");
+            entity.HasKey(e => e.IdDetalleTransacciones);
 
-            entity.ToTable("DETALLE_TRANSACCIONES", "dbo");
+            entity.ToTable("DETALLE_TRANSACCIONES");
 
             entity.Property(e => e.IdDetalleTransacciones).HasColumnName("id_Detalle_transacciones");
             entity.Property(e => e.Detalle).HasMaxLength(500);
@@ -189,9 +197,9 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<EntidadesFinanciera>(entity =>
         {
-            entity.HasKey(e => e.IdEntidadFinanciera).HasName("PK__ENTIDADE__608E3ACEA40CD6EA");
+            entity.HasKey(e => e.IdEntidadFinanciera);
 
-            entity.ToTable("ENTIDADES_FINANCIERAS", "dbo");
+            entity.ToTable("ENTIDADES_FINANCIERAS");
 
             entity.Property(e => e.IdEntidadFinanciera).HasColumnName("id_Entidad_Financiera");
             entity.Property(e => e.Alias).HasMaxLength(500);
@@ -214,9 +222,9 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<Prestamo>(entity =>
         {
-            entity.HasKey(e => e.IdPrestamo).HasName("PK__PRESTAMO__B41FF2E5F2ABE02F");
+            entity.HasKey(e => e.IdPrestamo);
 
-            entity.ToTable("PRESTAMOS", "dbo");
+            entity.ToTable("PRESTAMOS");
 
             entity.Property(e => e.IdPrestamo).HasColumnName("id_Prestamo");
             entity.Property(e => e.DiaVencimientoCuota).HasColumnName("Dia_vencimiento_cuota");
@@ -245,9 +253,9 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<Provincia>(entity =>
         {
-            entity.HasKey(e => e.IdProvincia).HasName("PK__PROVINCI__C83EC194A3D3C572");
+            entity.HasKey(e => e.IdProvincia);
 
-            entity.ToTable("PROVINCIAS", "dbo");
+            entity.ToTable("PROVINCIAS");
 
             entity.Property(e => e.IdProvincia).HasColumnName("id_Provincia");
             entity.Property(e => e.Provincia1)
@@ -257,9 +265,9 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<Punto>(entity =>
         {
-            entity.HasKey(e => e.IdPuntos).HasName("PK__PUNTOS__3486CBF383DDE525");
+            entity.HasKey(e => e.IdPuntos);
 
-            entity.ToTable("PUNTOS", "dbo");
+            entity.ToTable("PUNTOS");
 
             entity.Property(e => e.IdPuntos).HasColumnName("id_puntos");
             entity.Property(e => e.CantidadPuntos).HasColumnName("Cantidad_puntos");
@@ -268,9 +276,9 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<Scoring>(entity =>
         {
-            entity.HasKey(e => e.IdScoring).HasName("PK__SCORINGS__E6A09A86B1CA5D8E");
+            entity.HasKey(e => e.IdScoring);
 
-            entity.ToTable("SCORINGS", "dbo");
+            entity.ToTable("SCORINGS");
 
             entity.Property(e => e.IdScoring).HasColumnName("id_Scoring");
             entity.Property(e => e.Beneficio).HasColumnType("decimal(10, 2)");
@@ -278,9 +286,9 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<TiposEntidadFinanciera>(entity =>
         {
-            entity.HasKey(e => e.IdTipoEntidad).HasName("PK__TIPOS_EN__30510B3A54DFE684");
+            entity.HasKey(e => e.IdTipoEntidad);
 
-            entity.ToTable("TIPOS_ENTIDAD_FINANCIERA", "dbo");
+            entity.ToTable("TIPOS_ENTIDAD_FINANCIERA");
 
             entity.Property(e => e.IdTipoEntidad).HasColumnName("id_Tipo_Entidad");
             entity.Property(e => e.Descripción).HasMaxLength(500);
@@ -288,9 +296,9 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<TiposTransaccion>(entity =>
         {
-            entity.HasKey(e => e.IdTipoTransaccion).HasName("PK__TIPOS_TR__A208B3604C8FCCCF");
+            entity.HasKey(e => e.IdTipoTransaccion);
 
-            entity.ToTable("TIPOS_TRANSACCION", "dbo");
+            entity.ToTable("TIPOS_TRANSACCION");
 
             entity.Property(e => e.IdTipoTransaccion).HasColumnName("id_Tipo_Transaccion");
             entity.Property(e => e.Descripción).HasMaxLength(500);
@@ -298,9 +306,9 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<TiposUsuario>(entity =>
         {
-            entity.HasKey(e => e.IdTipoUsuario).HasName("PK__TIPOS_US__669B0AF00EE0CD42");
+            entity.HasKey(e => e.IdTipoUsuario);
 
-            entity.ToTable("TIPOS_USUARIOS", "dbo");
+            entity.ToTable("TIPOS_USUARIOS");
 
             entity.Property(e => e.IdTipoUsuario).HasColumnName("id_Tipo_Usuario");
             entity.Property(e => e.Descripción).HasMaxLength(500);
@@ -308,9 +316,9 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<Transaccione>(entity =>
         {
-            entity.HasKey(e => e.IdTransaccion).HasName("PK__TRANSACC__896AC4C838222314");
+            entity.HasKey(e => e.IdTransaccion);
 
-            entity.ToTable("TRANSACCIONES", "dbo");
+            entity.ToTable("TRANSACCIONES");
 
             entity.Property(e => e.IdTransaccion).HasColumnName("id_Transaccion");
             entity.Property(e => e.FechaTransaccion)
@@ -325,9 +333,9 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<Usuario>(entity =>
         {
-            entity.HasKey(e => e.IdUsuarios).HasName("PK__USUARIOS__F80D2BD70DE397A3");
+            entity.HasKey(e => e.IdUsuarios);
 
-            entity.ToTable("USUARIOS", "dbo");
+            entity.ToTable("USUARIOS");
 
             entity.Property(e => e.IdUsuarios).HasColumnName("id_Usuarios");
             entity.Property(e => e.Apellidos).HasMaxLength(500);
