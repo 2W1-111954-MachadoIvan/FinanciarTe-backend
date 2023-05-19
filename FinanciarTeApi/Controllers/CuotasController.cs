@@ -15,22 +15,28 @@ namespace FinanciarTeApi.Controllers
             _servicioCobroCuotas = servicioCobroCuotas;
         }
 
-        [HttpGet("getCuotas/{id}")]
+        [HttpGet("getCuota/{id}")]
+        public async Task<ActionResult> GetCuotaByID(int id)
+        {
+            return Ok(await _servicioCobroCuotas.GetCuotaByID(id));
+        }
+
+        [HttpGet("getCuotasCliente/{id}")]
         public async Task<ActionResult> GetCuotasByCliente(int id)
         {
             return Ok(await _servicioCobroCuotas.GetCuotasByCliente(id));
         }
 
         [HttpPost("registrarCuotas/")]
-        public async Task<ActionResult> RegistrarCuotas([FromBody] ComandoCuota comando)
+        public async Task<ActionResult> RegistrarPagoCuotas([FromBody] ComandoCuota comando)
         {
-            return Ok(await _servicioCobroCuotas.RegistrarCuotas(comando));
+            return Ok(await _servicioCobroCuotas.RegistrarPagoCuotas(comando));
         }
 
         [HttpPut("modificarCuota/")]
-        public async Task<ActionResult> ModificarCuotas([FromBody] ComandoCuota comando)
+        public async Task<ActionResult> ModificarPagoCuotas([FromBody] ComandoCuota comando)
         {
-            return Ok(await _servicioCobroCuotas.ModificarCuota(comando));
+            return Ok(await _servicioCobroCuotas.ModificarPagoCuotas(comando));
         }
     }
 }

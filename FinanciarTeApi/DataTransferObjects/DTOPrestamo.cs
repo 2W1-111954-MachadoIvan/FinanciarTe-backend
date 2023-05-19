@@ -6,7 +6,7 @@
         public long? idCliente { get; set; }
         public long? montoOtorgado { get; set; }
         public string estado { get; set; }
-        public string coutasPagas { get; set; }
+        public string cuotasPagas { get; set; }
         public decimal? saldoPendiente { get; set; }
     }
 

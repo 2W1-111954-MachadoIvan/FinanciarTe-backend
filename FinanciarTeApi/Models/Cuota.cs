@@ -5,7 +5,7 @@ namespace FinanciarTeApi.Models;
 
 public partial class Cuota
 {
-    public long IdCobroCuota { get; set; }
+    public long IdCuota { get; set; }
 
     public long? IdCliente { get; set; }
 
@@ -15,7 +15,7 @@ public partial class Cuota
 
     public DateTime? FechaVencimiento { get; set; }
 
-    public decimal? MotoCuota { get; set; }
+    public decimal? MontoCuota { get; set; }
 
     public DateTime? FechaPago { get; set; }
 
@@ -31,11 +31,5 @@ public partial class Cuota
 
     public virtual Cliente? IdClienteNavigation { get; set; }
 
-    public virtual DetalleTransaccione? IdDetalleTransaccionNavigation { get; set; }
-
     public virtual Prestamo? IdPrestamoNavigation { get; set; }
-
-    public virtual Punto? IdPuntosNavigation { get; set; }
-
-    public virtual Transaccione? IdTransaccionNavigation { get; set; }
 }

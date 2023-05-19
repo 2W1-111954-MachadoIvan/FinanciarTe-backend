@@ -10,10 +10,12 @@
 
     public class ComandoDetalleCuotas
     {
-        public long? idCobroCuota { get; set; }
+        public long? idCuota { get; set; }
         public long? idCliente { get; set; }
         public long? idPrestamo { get; set; }
         public long? numeroCuota { get; set; }
+        public DateTime? fechaVencimiento { get; set; }
+        public decimal? montoCuota { get; set; }
         public decimal? montoAbonado { get; set; }
         public bool? cuotaVencida { get; set; }
         public long? idPuntos { get; set; }

@@ -10,6 +10,4 @@ public partial class Punto
     public string? Descripción { get; set; }
 
     public long? CantidadPuntos { get; set; }
-
-    public virtual ICollection<Cuota> Cuota { get; } = new List<Cuota>();
 }

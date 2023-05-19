@@ -23,21 +23,22 @@ namespace FinanciarTeApi.Services
         public async Task<DTOCuota> GetCuotaByID(int id)
         {
             var comando = await _context.Cuotas
-                                      .Where(c => c.IdCobroCuota == id)
+                                      .Where(c => c.IdCuota == id)
                                       .FirstOrDefaultAsync();
 
             DTOCuota cuota = new DTOCuota();
 
             if(comando != null)
             {
-                cuota.idCobroCuota = comando.IdCobroCuota;
+                cuota.idCuota = comando.IdCuota;
                 cuota.idCliente = comando.IdCliente;
                 cuota.idPrestamo = comando.IdPrestamo;
                 cuota.nroCuota = comando.NumeroCuota;
+                cuota.MontoCuota = comando.MontoCuota;
                 cuota.montoAbonado = comando.MontoAbonado;
                 cuota.fechaPago = comando.FechaPago;
                 cuota.cuotaVencida = comando.CuotaVencida == true ? "Vencida" : "En plazo";
-                cuota.puntos = comando.IdPuntosNavigation?.CantidadPuntos;
+                cuota.puntos = _context.Puntos.Where(c=>c.IdPuntos == comando.IdPuntos).Select(c=>c.CantidadPuntos).FirstOrDefault();
                 cuota.idTransaccion = comando.IdTransaccion;
             }
 
@@ -50,20 +51,24 @@ namespace FinanciarTeApi.Services
                                       .Where(c => c.IdCliente == id)
                                       .Select(c => new DTOCuota
                                       {
-                                          idCobroCuota = c.IdCobroCuota,
+                                          idCuota = c.IdCuota,
                                           idCliente = c.IdCliente,
                                           idPrestamo = c.IdPrestamo,
                                           nroCuota = c.NumeroCuota,
+                                          MontoCuota = c.MontoCuota,
+                                          FechaVencimiento = c.FechaVencimiento,
                                           montoAbonado = c.MontoAbonado,
                                           fechaPago = c.FechaPago,
-                                          cuotaVencida = c.CuotaVencida == true ? "Vencida" : "En plazo",
-                                          puntos = c.IdPuntosNavigation.CantidadPuntos,
+                                          cuotaVencida = c.FechaPago > c.FechaVencimiento ? "Vencida" : 
+                                                         c.FechaPago == null && DateTime.Now > c.FechaVencimiento? "Vencida" :
+                                                         c.FechaPago == null && DateTime.Now < c.FechaVencimiento ? "En plazo" : "En plazo",
+                                          puntos = _context.Puntos.Where(x => x.IdPuntos == c.IdPuntos).Select(x => x.CantidadPuntos).FirstOrDefault(),
                                           idTransaccion = c.IdTransaccion
                                       }).ToListAsync();
             return cuotas;
         }
 
-        public async Task<ResultadoBase> RegistrarCuotas(ComandoCuota comando)
+        public async Task<ResultadoBase> RegistrarPagoCuotas(ComandoCuota comando)
         {
             try
             {
@@ -90,18 +95,18 @@ namespace FinanciarTeApi.Services
                     await _context.DetalleTransacciones.AddAsync(detalles);
                     await _context.SaveChangesAsync();
 
-                    Cuota cobrosCuota = new Cuota();
-                    cobrosCuota.NumeroCuota = dc.numeroCuota;
-                    cobrosCuota.MontoAbonado = dc.montoAbonado;
-                    cobrosCuota.IdPrestamo = dc.idPrestamo;
-                    cobrosCuota.CuotaVencida = dc.cuotaVencida;
-                    cobrosCuota.IdCliente = dc.idCliente;
-                    cobrosCuota.IdTransaccion = idTransaccion;
-                    cobrosCuota.IdPuntos = dc.idPuntos;
-                    cobrosCuota.FechaPago = comando.fechaPago;
-                    cobrosCuota.IdDetalleTransaccion = detalles.IdDetalleTransacciones;
+                    var idDetalleTransaccion = _context.DetalleTransacciones.Where(c=>c.IdDetalleTransacciones.Equals(detalles.IdDetalleTransacciones)).Select(c=>c.IdDetalleTransacciones).FirstOrDefault();
 
-                    await _context.Cuotas.AddAsync(cobrosCuota);
+                    var cuota = _context.Cuotas.Where(c=>c.NumeroCuota == dc.numeroCuota && c.IdPrestamo == dc.idPrestamo).FirstOrDefault();
+
+                    cuota.CuotaVencida = comando.fechaPago > cuota.FechaVencimiento ? true : false;
+                    cuota.FechaPago = comando.fechaPago;
+                    cuota.MontoAbonado = dc.montoAbonado;
+                    cuota.IdTransaccion = idTransaccion;
+                    cuota.IdDetalleTransaccion = idDetalleTransaccion;
+                    cuota.IdPuntos = cuota.CuotaVencida == true ? 1 : 2;
+
+                    _context.Cuotas.Update(cuota);
                     await _context.SaveChangesAsync();
                 }
             }
@@ -113,10 +118,18 @@ namespace FinanciarTeApi.Services
             return await Task.FromResult(new ResultadoBase { CodigoEstado = 200, Message = "Cuotas ingresadas ok"/*Constantes.DefaultMessages.DefaultSuccesMessage.ToString()*/, Ok = true });
         }
 
-        public async Task<ResultadoBase> ModificarCuota(ComandoCuota comando)
+        public async Task<ResultadoBase> ModificarPagoCuotas(ComandoCuota comando)
         {
             try
             {
+                var transaccion = await _context.Transacciones.Where(c => c.IdTransaccion == comando.idTransaccion).FirstOrDefaultAsync();
+
+                transaccion.FechaTransaccion = comando.fechaPago;
+                transaccion.IdEntidadFinanciera = comando.idEntidadFinanciera;
+
+                _context.Transacciones.Update(transaccion);
+                await _context.SaveChangesAsync();
+
                 foreach (ComandoDetalleCuotas dc in comando.detalleCuotas)
                 {
                     var dt = await _context.DetalleTransacciones.Where(c => c.IdDetalleTransacciones == dc.idDetalleTransaccion).FirstOrDefaultAsync();
@@ -128,18 +141,14 @@ namespace FinanciarTeApi.Services
                     _context.DetalleTransacciones.Update(dt);
                     await _context.SaveChangesAsync();
 
-                    var cobrosCuota = await _context.Cuotas.Where(c=>c.IdCobroCuota == dc.idCobroCuota).FirstOrDefaultAsync();
-                    cobrosCuota.NumeroCuota = dc.numeroCuota;
-                    cobrosCuota.MontoAbonado = dc.montoAbonado;
-                    cobrosCuota.IdPrestamo = dc.idPrestamo;
-                    cobrosCuota.CuotaVencida = dc.cuotaVencida;
-                    cobrosCuota.IdCliente = dc.idCliente;
-                    cobrosCuota.IdTransaccion = dc.idTransaccion;
-                    cobrosCuota.IdPuntos = dc.idPuntos;
-                    cobrosCuota.FechaPago = comando.fechaPago;
-                    cobrosCuota.IdDetalleTransaccion = dc.idDetalleTransaccion;
+                    var cuota = await _context.Cuotas.Where(c=>c.IdCuota == dc.idCuota).FirstOrDefaultAsync();
+                    cuota.FechaPago = comando.fechaPago;
+                    cuota.MontoAbonado = dc.montoAbonado;
+                    cuota.CuotaVencida = comando.fechaPago > cuota.FechaVencimiento ? true : false;
+                    cuota.IdPuntos = cuota.CuotaVencida == true ? 2 : 1;
 
-                    _context.Cuotas.Update(cobrosCuota);
+
+                    _context.Cuotas.Update(cuota);
                     await _context.SaveChangesAsync();
                 }
             }

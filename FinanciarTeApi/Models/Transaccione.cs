@@ -11,8 +11,6 @@ public partial class Transaccione
 
     public DateTime? FechaTransaccion { get; set; }
 
-    public virtual ICollection<Cuota> Cuota { get; } = new List<Cuota>();
-
     public virtual ICollection<DetalleTransaccione> DetalleTransacciones { get; } = new List<DetalleTransaccione>();
 
     public virtual EntidadesFinanciera? IdEntidadFinancieraNavigation { get; set; }

@@ -128,11 +128,11 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<Cuota>(entity =>
         {
-            entity.HasKey(e => e.IdCobroCuota).HasName("PK_COBROS_CUOTAS");
+            entity.HasKey(e => e.IdCuota).HasName("PK_COBROS_CUOTAS");
 
             entity.ToTable("CUOTAS");
 
-            entity.Property(e => e.IdCobroCuota).HasColumnName("id_Cobro_Cuota");
+            entity.Property(e => e.IdCuota).HasColumnName("id_Cuota");
             entity.Property(e => e.CuotaVencida).HasColumnName("Cuota_vencida");
             entity.Property(e => e.FechaPago)
                 .HasColumnType("date")
@@ -148,30 +148,18 @@ public partial class FinanciarTeContext : DbContext
             entity.Property(e => e.MontoAbonado)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Monto_abonado");
-            entity.Property(e => e.MotoCuota)
+            entity.Property(e => e.MontoCuota)
                 .HasColumnType("decimal(10, 2)")
-                .HasColumnName("Moto_cuota");
+                .HasColumnName("Monto_cuota");
             entity.Property(e => e.NumeroCuota).HasColumnName("Numero_Cuota");
 
             entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.Cuota)
                 .HasForeignKey(d => d.IdCliente)
                 .HasConstraintName("FK_COBROS_CUOTAS_CLIENTES");
 
-            entity.HasOne(d => d.IdDetalleTransaccionNavigation).WithMany(p => p.Cuota)
-                .HasForeignKey(d => d.IdDetalleTransaccion)
-                .HasConstraintName("FK_COBROS_CUOTAS_DETALLE_TRANSACCIONES");
-
             entity.HasOne(d => d.IdPrestamoNavigation).WithMany(p => p.Cuota)
                 .HasForeignKey(d => d.IdPrestamo)
                 .HasConstraintName("FK_COBROS_CUOTAS_PRESTAMOS");
-
-            entity.HasOne(d => d.IdPuntosNavigation).WithMany(p => p.Cuota)
-                .HasForeignKey(d => d.IdPuntos)
-                .HasConstraintName("FK_COBROS_CUOTAS_PUNTOS");
-
-            entity.HasOne(d => d.IdTransaccionNavigation).WithMany(p => p.Cuota)
-                .HasForeignKey(d => d.IdTransaccion)
-                .HasConstraintName("FK_COBROS_CUOTAS_TRANSACCIONES");
         });
 
         modelBuilder.Entity<DetalleTransaccione>(entity =>

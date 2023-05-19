@@ -9,7 +9,7 @@ namespace FinanciarTeApi.Services
         Task<List<DTOCuota>> GetCuotasByCliente(int id);
         Task<DTOCuota> GetCuotaByID(int id);
         Task<ResultadoBase> DeleteCuota(int id);
-        Task<ResultadoBase> RegistrarCuotas(ComandoCuota comando);
-        Task<ResultadoBase> ModificarCuota(ComandoCuota comando);
+        Task<ResultadoBase> RegistrarPagoCuotas(ComandoCuota comando);
+        Task<ResultadoBase> ModificarPagoCuotas(ComandoCuota comando);
     }
 }
