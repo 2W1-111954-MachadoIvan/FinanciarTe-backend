@@ -74,5 +74,11 @@ namespace FinanciarTeApi.Controllers
 
             return Ok(await this._servicioCliente.DeleteCliente(id));
         }
+
+        [HttpGet("getClientesForComboBox/")]
+        public async Task<IActionResult> GetClienteForComboBoxItem()
+        {
+            return Ok(await _servicioCliente.GetClientesForComboBox());
+        }
     }
 }

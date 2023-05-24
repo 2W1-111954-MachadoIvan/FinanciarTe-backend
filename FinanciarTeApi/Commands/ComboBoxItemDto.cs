@@ -71,5 +71,14 @@ namespace FinanciarTeApi.Commands
                 descripcion = entity.Descripción
             };
         }
+
+        public static implicit operator ComboBoxItemDto(Cliente entity)
+        {
+            return new ComboBoxItemDto
+            {
+                id = (int)entity.NroDni,
+                descripcion = entity.Apellidos + " " +entity.Nombres
+            };
+        }
     }
 }

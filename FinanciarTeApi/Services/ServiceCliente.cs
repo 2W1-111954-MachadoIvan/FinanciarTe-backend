@@ -205,6 +205,10 @@ namespace FinanciarTeApi.Services
             return resultado;
         }
 
+        public async Task<List<ComboBoxItemDto>> GetClientesForComboBox()
+        {
+            return await _context.Clientes.AsNoTracking().Select<Cliente, ComboBoxItemDto>(x => x).ToListAsync();
+        }
 
     }
 }

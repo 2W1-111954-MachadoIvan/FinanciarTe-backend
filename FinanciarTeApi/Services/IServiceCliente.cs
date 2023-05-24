@@ -13,5 +13,6 @@ namespace FinanciarTeApi.Services
         Task<ComandoCliente> GetClienteByID(int id);
         Task<ResultadoBase> PutCliente(ComandoCliente cliente);
         Task<ResultadoBase> DeleteCliente(int id);
+        Task<List<ComboBoxItemDto>> GetClientesForComboBox();
     }
 }

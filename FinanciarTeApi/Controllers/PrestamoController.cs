@@ -15,10 +15,16 @@ namespace FinanciarTeApi.Controllers
             _servicioPrestamo = servicioPrestamo;
         }
 
-        [HttpGet("getPrestamos/{id}")]
+        [HttpGet("getPrestamosByCliente/{id}")]
         public async Task<ActionResult> GetPrestamosByCliente(int id)
         {
             return Ok(await _servicioPrestamo.GetPrestamosByCliente(id));
+        }
+
+        [HttpGet("getPrestamos/")]
+        public async Task<ActionResult> GetPrestamos()
+        {
+            return Ok(await _servicioPrestamo.GetPrestamos());
         }
 
         [HttpGet("getPrestamoById/{id}")]

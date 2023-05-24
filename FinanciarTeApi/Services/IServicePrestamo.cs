@@ -7,6 +7,7 @@ namespace FinanciarTeApi.Services
     public interface IServicePrestamo
     {
         Task<List<DTOListadoPrestamos>> GetPrestamosByCliente(int id);
+        Task<List<DTOListadoPrestamos>> GetPrestamos();
         Task<DTOPrestamo> GetPrestamoByID(int id);
         Task<ResultadoBase> DeletePrestamo(int id);
         Task<ResultadoBase> RegistrarPrestamo(ComandoPrestamo comando);
