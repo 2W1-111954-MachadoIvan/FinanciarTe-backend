@@ -34,7 +34,9 @@ public partial class FinanciarTeContext : DbContext
 
     public virtual DbSet<Provincia> Provincias { get; set; }
 
-    public virtual DbSet<Punto> Puntos { get; set; }
+    public virtual DbSet<Puntaje> Puntajes { get; set; }
+
+    public virtual DbSet<PuntosPorCliente> PuntosPorClientes { get; set; }
 
     public virtual DbSet<Scoring> Scorings { get; set; }
 
@@ -47,6 +49,16 @@ public partial class FinanciarTeContext : DbContext
     public virtual DbSet<Transaccione> Transacciones { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
+
+    public virtual DbSet<ViewCliente> ViewClientes { get; set; }
+
+    public virtual DbSet<ViewCuota> ViewCuotas { get; set; }
+
+    public virtual DbSet<ViewHistoricoPunto> ViewHistoricoPuntos { get; set; }
+
+    public virtual DbSet<ViewPrestamo> ViewPrestamos { get; set; }
+
+    public virtual DbSet<ViewTransaccionesConDet> ViewTransaccionesConDets { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
@@ -143,7 +155,6 @@ public partial class FinanciarTeContext : DbContext
             entity.Property(e => e.IdCliente).HasColumnName("id_Cliente");
             entity.Property(e => e.IdDetalleTransaccion).HasColumnName("id_Detalle_Transaccion");
             entity.Property(e => e.IdPrestamo).HasColumnName("id_Prestamo");
-            entity.Property(e => e.IdPuntos).HasColumnName("id_puntos");
             entity.Property(e => e.IdTransaccion).HasColumnName("id_Transaccion");
             entity.Property(e => e.MontoAbonado)
                 .HasColumnType("decimal(10, 2)")
@@ -173,6 +184,9 @@ public partial class FinanciarTeContext : DbContext
             entity.Property(e => e.IdCategoria).HasColumnName("id_Categoria");
             entity.Property(e => e.IdTransaccion).HasColumnName("id_Transaccion");
             entity.Property(e => e.Monto).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.MotivoAnulacion)
+                .HasMaxLength(500)
+                .HasColumnName("Motivo_anulacion");
 
             entity.HasOne(d => d.IdCategoriaNavigation).WithMany(p => p.DetalleTransacciones)
                 .HasForeignKey(d => d.IdCategoria)
@@ -224,6 +238,9 @@ public partial class FinanciarTeContext : DbContext
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Indice_interes");
             entity.Property(e => e.MontoOtorgado).HasColumnName("Monto_otorgado");
+            entity.Property(e => e.MotivoAnulacion)
+                .HasMaxLength(500)
+                .HasColumnName("Motivo_anulacion");
             entity.Property(e => e.RefinanciaDeuda).HasColumnName("Refinancia_Deuda");
 
             entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.Prestamos)
@@ -251,15 +268,49 @@ public partial class FinanciarTeContext : DbContext
                 .HasColumnName("Provincia");
         });
 
-        modelBuilder.Entity<Punto>(entity =>
+        modelBuilder.Entity<Puntaje>(entity =>
         {
-            entity.HasKey(e => e.IdPuntos);
+            entity.HasKey(e => e.IdPuntos).HasName("PK_PUNTOS");
 
-            entity.ToTable("PUNTOS");
+            entity.ToTable("PUNTAJES");
 
             entity.Property(e => e.IdPuntos).HasColumnName("id_puntos");
             entity.Property(e => e.CantidadPuntos).HasColumnName("Cantidad_puntos");
             entity.Property(e => e.Descripción).HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<PuntosPorCliente>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("PUNTOS_POR_CLIENTES");
+
+            entity.Property(e => e.IdCliente).HasColumnName("id_Cliente");
+            entity.Property(e => e.IdDetalleTransaccion).HasColumnName("id_Detalle_Transaccion");
+            entity.Property(e => e.IdPuntaje).HasColumnName("id_puntaje");
+            entity.Property(e => e.IdPuntosAsignados)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("id_puntos_asignados");
+            entity.Property(e => e.IdTransaccion).HasColumnName("id_Transaccion");
+            entity.Property(e => e.MotivoAnulacion)
+                .HasMaxLength(500)
+                .HasColumnName("Motivo_anulacion");
+
+            entity.HasOne(d => d.IdClienteNavigation).WithMany()
+                .HasForeignKey(d => d.IdCliente)
+                .HasConstraintName("FK_PUNTOS_POR_CLIENTES_CLIENTES");
+
+            entity.HasOne(d => d.IdDetalleTransaccionNavigation).WithMany()
+                .HasForeignKey(d => d.IdDetalleTransaccion)
+                .HasConstraintName("FK_PUNTOS_POR_CLIENTES_DETALLE_TRANSACCIONES");
+
+            entity.HasOne(d => d.IdPuntajeNavigation).WithMany()
+                .HasForeignKey(d => d.IdPuntaje)
+                .HasConstraintName("FK_PUNTOS_POR_CLIENTES_PUNTAJES");
+
+            entity.HasOne(d => d.IdTransaccionNavigation).WithMany()
+                .HasForeignKey(d => d.IdTransaccion)
+                .HasConstraintName("FK_PUNTOS_POR_CLIENTES_TRANSACCIONES");
         });
 
         modelBuilder.Entity<Scoring>(entity =>
@@ -313,6 +364,9 @@ public partial class FinanciarTeContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("Fecha_transaccion");
             entity.Property(e => e.IdEntidadFinanciera).HasColumnName("id_Entidad_Financiera");
+            entity.Property(e => e.MotivoAnulacion)
+                .HasMaxLength(500)
+                .HasColumnName("Motivo_anulacion");
 
             entity.HasOne(d => d.IdEntidadFinancieraNavigation).WithMany(p => p.Transacciones)
                 .HasForeignKey(d => d.IdEntidadFinanciera)
@@ -336,6 +390,137 @@ public partial class FinanciarTeContext : DbContext
             entity.HasOne(d => d.IdTipoUsuarioNavigation).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.IdTipoUsuario)
                 .HasConstraintName("FK_USUARIOS_TIPOS_USUARIOS");
+        });
+
+        modelBuilder.Entity<ViewCliente>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("view_Cliente");
+
+            entity.Property(e => e.Activo)
+                .HasMaxLength(2)
+                .IsUnicode(false);
+            entity.Property(e => e.Apellidos).HasMaxLength(500);
+            entity.Property(e => e.BeneficioScoring)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Beneficio Scoring");
+            entity.Property(e => e.CantidadDePrestamos).HasColumnName("Cantidad de Prestamos");
+            entity.Property(e => e.Ciudad).HasMaxLength(500);
+            entity.Property(e => e.CodigoPostal).HasColumnName("Codigo_postal");
+            entity.Property(e => e.ContactoAlternativo)
+                .HasMaxLength(1002)
+                .HasColumnName("Contacto Alternativo");
+            entity.Property(e => e.Dirección).HasMaxLength(531);
+            entity.Property(e => e.Dni).HasColumnName("DNI");
+            entity.Property(e => e.Email).HasMaxLength(500);
+            entity.Property(e => e.EmailContactoAlternativo)
+                .HasMaxLength(500)
+                .HasColumnName("Email Contacto Alternativo");
+            entity.Property(e => e.FechaDeNacimiento)
+                .HasColumnType("date")
+                .HasColumnName("Fecha de nacimiento");
+            entity.Property(e => e.Nombres).HasMaxLength(500);
+            entity.Property(e => e.Provincia).HasMaxLength(500);
+            entity.Property(e => e.PuntosActuales).HasColumnName("Puntos actuales");
+            entity.Property(e => e.PuntosIniciales).HasColumnName("Puntos_iniciales");
+            entity.Property(e => e.TelefonoContactoAlternativo).HasColumnName("Telefono Contacto Alternativo");
+        });
+
+        modelBuilder.Entity<ViewCuota>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("view_Cuotas");
+
+            entity.Property(e => e.Cliente).HasMaxLength(1002);
+            entity.Property(e => e.CuotaN).HasColumnName("Cuota N°");
+            entity.Property(e => e.CuotaVencida)
+                .HasMaxLength(8)
+                .IsUnicode(false)
+                .HasColumnName("Cuota Vencida");
+            entity.Property(e => e.FechaDePago)
+                .HasMaxLength(30)
+                .HasColumnName("Fecha de Pago");
+            entity.Property(e => e.FechaDeVencimiento)
+                .HasMaxLength(30)
+                .HasColumnName("Fecha de Vencimiento");
+            entity.Property(e => e.IdDetalleTransacción).HasColumnName("ID Detalle Transacción");
+            entity.Property(e => e.IdPrestamo).HasColumnName("ID Prestamo");
+            entity.Property(e => e.IdTransacción).HasColumnName("ID Transacción");
+            entity.Property(e => e.MontoAbonado)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Monto abonado");
+            entity.Property(e => e.MontoDeCuota)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Monto de cuota");
+            entity.Property(e => e.PuntosOtorgados).HasColumnName("Puntos otorgados");
+        });
+
+        modelBuilder.Entity<ViewHistoricoPunto>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("view_HistoricoPuntos");
+
+            entity.Property(e => e.Cliente).HasMaxLength(1002);
+            entity.Property(e => e.Descripción).HasMaxLength(500);
+            entity.Property(e => e.Detalle).HasMaxLength(500);
+            entity.Property(e => e.Fecha).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<ViewPrestamo>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("view_Prestamos");
+
+            entity.Property(e => e.BeneficioScoring)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Beneficio Scoring");
+            entity.Property(e => e.Cliente).HasMaxLength(1002);
+            entity.Property(e => e.CuotasPagas).HasColumnName("Cuotas pagas");
+            entity.Property(e => e.DniCliente).HasColumnName("DNI Cliente");
+            entity.Property(e => e.Estado)
+                .HasMaxLength(12)
+                .IsUnicode(false);
+            entity.Property(e => e.IdPrestamo).HasColumnName("ID Prestamo");
+            entity.Property(e => e.IndiceFinanciarTe)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Indice FinanciarTe");
+            entity.Property(e => e.MontoADevolver)
+                .HasColumnType("decimal(31, 2)")
+                .HasColumnName("Monto a devolver");
+            entity.Property(e => e.MontoAbonado)
+                .HasColumnType("decimal(38, 2)")
+                .HasColumnName("Monto abonado");
+            entity.Property(e => e.MontoOtorgado).HasColumnName("Monto Otorgado");
+            entity.Property(e => e.SaldoPendiente)
+                .HasColumnType("decimal(38, 2)")
+                .HasColumnName("Saldo Pendiente");
+            entity.Property(e => e.VencimientoPrimeraCuota)
+                .HasColumnType("date")
+                .HasColumnName("Vencimiento Primera Cuota");
+            entity.Property(e => e.VencimientoUltimaCuota)
+                .HasColumnType("date")
+                .HasColumnName("Vencimiento Ultima Cuota");
+        });
+
+        modelBuilder.Entity<ViewTransaccionesConDet>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("view_TransaccionesConDet");
+
+            entity.Property(e => e.Descripcion).HasMaxLength(500);
+            entity.Property(e => e.Descripción).HasMaxLength(500);
+            entity.Property(e => e.Detalle).HasMaxLength(500);
+            entity.Property(e => e.FechaTransaccion)
+                .HasColumnType("datetime")
+                .HasColumnName("Fecha_transaccion");
+            entity.Property(e => e.IdDetalleTransacciones).HasColumnName("id_Detalle_Transacciones");
+            entity.Property(e => e.IdTransaccion).HasColumnName("id_Transaccion");
+            entity.Property(e => e.Monto).HasColumnType("decimal(10, 2)");
         });
 
         OnModelCreatingPartial(modelBuilder);

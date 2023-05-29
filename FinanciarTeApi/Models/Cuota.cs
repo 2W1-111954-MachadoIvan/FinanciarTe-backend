@@ -27,8 +27,6 @@ public partial class Cuota
 
     public long? IdDetalleTransaccion { get; set; }
 
-    public long? IdPuntos { get; set; }
-
     public virtual Cliente? IdClienteNavigation { get; set; }
 
     public virtual Prestamo? IdPrestamoNavigation { get; set; }

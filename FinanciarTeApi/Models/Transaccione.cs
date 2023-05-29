@@ -11,6 +11,10 @@ public partial class Transaccione
 
     public DateTime? FechaTransaccion { get; set; }
 
+    public bool? Anulada { get; set; }
+
+    public string? MotivoAnulacion { get; set; }
+
     public virtual ICollection<DetalleTransaccione> DetalleTransacciones { get; } = new List<DetalleTransaccione>();
 
     public virtual EntidadesFinanciera? IdEntidadFinancieraNavigation { get; set; }

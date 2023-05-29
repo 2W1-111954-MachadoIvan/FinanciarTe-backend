@@ -24,23 +24,26 @@ namespace FinanciarTeApi.Services
 
         public async Task<List<DTOListadoPrestamos>> GetPrestamosByCliente(int id)
         {         
-            var query = _context.Prestamos
-                        .Where(p => p.IdCliente == id)
-                        .GroupJoin(
-                            _context.Cuotas,
-                            p => p.IdPrestamo,
-                            cc => cc.IdPrestamo,
-                            (p, cc) => new { Prestamo = p, Cuotas = cc.DefaultIfEmpty() }
-                        )
+            var query = _context.ViewPrestamos
+                        .AsNoTracking()
+                        .Where(p => p.DniCliente == id)
                         .Select(g => new DTOListadoPrestamos
                         {
-                            idPrestamo = g.Prestamo.IdPrestamo,
-                            idCliente = g.Prestamo.IdCliente,
-                            montoOtorgado = g.Prestamo.MontoOtorgado,
-                            cuotasPagas = g.Cuotas.Sum(c=>c.MontoAbonado) > 0 ? g.Cuotas.Where(c=>c.FechaPago != null).Count() + " de " + g.Prestamo.Cuotas : "0 de " + g.Prestamo.Cuotas,
-                            saldoPendiente = g.Cuotas.Any() ? g.Prestamo.MontoOtorgado - g.Cuotas.Sum(c => c.MontoAbonado) : 0,
-                            estado = _context.Prestamos.Any(p => p.IdPrestamoRefinanciado == g.Prestamo.IdPrestamo) ? "Refinanciado" :
-                                     g.Cuotas.Any() ? (g.Prestamo.MontoOtorgado - g.Cuotas.Sum(c => c.MontoAbonado)) > 0 ? "Pendiente" : "Cancelado" : "Cancelado"
+                            idPrestamo = g.IdPrestamo,
+                            Cliente = g.Cliente,
+                            DniCliente = g.DniCliente,
+                            IndiceFinanciarTe = g.IndiceFinanciarTe,
+                            Scoring = g.Scoring,
+                            BeneficioScoring = g.BeneficioScoring,
+                            MontoOtorgado = g.MontoOtorgado,
+                            MontoADevolver = g.MontoADevolver,
+                            Cuotas = g.Cuotas,
+                            VencimientoPrimeraCuota = g.VencimientoPrimeraCuota,
+                            VencimientoUltimaCuota = g.VencimientoUltimaCuota,
+                            CuotasPagas = g.CuotasPagas,
+                            MontoAbonado = g.MontoAbonado,
+                            SaldoPendiente = g.SaldoPendiente,
+                            Estado = g.Estado
                         });
 
             return await query.ToListAsync();
@@ -48,22 +51,25 @@ namespace FinanciarTeApi.Services
 
         public async Task<List<DTOListadoPrestamos>> GetPrestamos()
         {
-            var query = _context.Prestamos
-                        .GroupJoin(
-                            _context.Cuotas,
-                            p => p.IdPrestamo,
-                            cc => cc.IdPrestamo,
-                            (p, cc) => new { Prestamo = p, Cuotas = cc.DefaultIfEmpty() }
-                        )
+            var query = _context.ViewPrestamos
+                        .AsNoTracking()
                         .Select(g => new DTOListadoPrestamos
                         {
-                            idPrestamo = g.Prestamo.IdPrestamo,
-                            idCliente = g.Prestamo.IdCliente,
-                            montoOtorgado = g.Prestamo.MontoOtorgado,
-                            cuotasPagas = g.Cuotas.Sum(c => c.MontoAbonado) > 0 ? g.Cuotas.Where(c => c.FechaPago != null).Count() + " de " + g.Prestamo.Cuotas : "0 de " + g.Prestamo.Cuotas,
-                            saldoPendiente = g.Cuotas.Any() ? g.Prestamo.MontoOtorgado - g.Cuotas.Sum(c => c.MontoAbonado) : 0,
-                            estado = _context.Prestamos.Any(p => p.IdPrestamoRefinanciado == g.Prestamo.IdPrestamo) ? "Refinanciado" :
-                                     g.Cuotas.Any() ? (g.Prestamo.MontoOtorgado - g.Cuotas.Sum(c => c.MontoAbonado)) > 0 ? "Pendiente" : "Cancelado" : "Cancelado"
+                            idPrestamo = g.IdPrestamo,
+                            Cliente = g.Cliente,
+                            DniCliente = g.DniCliente,
+                            IndiceFinanciarTe = g.IndiceFinanciarTe,
+                            Scoring = g.Scoring,
+                            BeneficioScoring = g.BeneficioScoring,
+                            MontoOtorgado = g.MontoOtorgado,
+                            MontoADevolver = g.MontoADevolver,
+                            Cuotas = g.Cuotas,
+                            VencimientoPrimeraCuota = g.VencimientoPrimeraCuota,
+                            VencimientoUltimaCuota = g.VencimientoUltimaCuota,
+                            CuotasPagas = g.CuotasPagas,
+                            MontoAbonado = g.MontoAbonado,
+                            SaldoPendiente = g.SaldoPendiente,
+                            Estado = g.Estado
                         });
 
             return await query.ToListAsync();

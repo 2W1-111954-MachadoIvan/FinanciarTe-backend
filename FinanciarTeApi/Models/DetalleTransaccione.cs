@@ -15,6 +15,10 @@ public partial class DetalleTransaccione
 
     public long? IdTransaccion { get; set; }
 
+    public bool? Anulado { get; set; }
+
+    public string? MotivoAnulacion { get; set; }
+
     public virtual Categoria? IdCategoriaNavigation { get; set; }
 
     public virtual Transaccione? IdTransaccionNavigation { get; set; }

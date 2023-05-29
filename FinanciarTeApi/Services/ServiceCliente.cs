@@ -55,60 +55,62 @@ namespace FinanciarTeApi.Services
 
         public async Task<List<DTOCliente>> GetClientes()
         {
-            var query = (from cl in _context.Clientes.Where(c => c.Activo.Equals(true)).AsNoTracking()
-                         join ca in _context.ContactosAlternativos.AsNoTracking() on cl.IdContactoAlternativo equals ca.IdContactoAlternativo
-                         join cd in _context.Ciudades.AsNoTracking() on cl.IdCiudad equals cd.IdCiudad
-                         join prv in _context.Provincias.AsNoTracking() on cd.IdProvincia equals prv.IdProvincia
-                         select new DTOCliente
-                            {
-                                NroDni = cl.NroDni,
-                                Nombres = cl.Nombres,
-                                Apellidos = cl.Apellidos,
-                                Telefono = cl.Telefono,
-                                Email = cl.Email,
-                                Direccion = cl.Direccion,
-                                Numero = cl.Numero,
-                                CodigoPostal = cl.CodigoPostal,
-                                Ciudad = cd.Ciudad,
-                                Provincia = prv.Provincia1,
-                                FechaDeNacimiento = cl.FechaDeNacimiento,
-                                PuntosIniciales = cl.PuntosIniciales,
-                                ContactoAlternativo = ca.Nombres + ca.Apellidos,
-                                TelContAlt = ca.Telefono,
-                                EmailContAlt = ca.Email
-                            }
-                        );
+            var query = _context.ViewClientes
+                        .AsNoTracking()
+                        .Select(g => new DTOCliente
+                        {
+                            Dni = g.Dni,
+                            Nombres = g.Nombres,
+                            Apellidos = g.Apellidos,
+                            FechaDeNacimiento = g.FechaDeNacimiento,
+                            Telefono = g.Telefono,
+                            Email = g.Email,
+                            Direccion = g.Dirección,
+                            CodigoPostal = g.CodigoPostal,
+                            Ciudad = g.Ciudad,
+                            Provincia = g.Provincia,
+                            PuntosIniciales = g.PuntosIniciales,
+                            PuntosActuales = g.PuntosActuales,
+                            CantidadDePrestamos = g.CantidadDePrestamos,
+                            Scoring = g.Scoring,
+                            BeneficioScoring = g.BeneficioScoring,
+                            Activo = g.Activo,
+                            ContactoAlternativo = g.ContactoAlternativo,
+                            TelContAlt = g.TelefonoContactoAlternativo,
+                            EmailContAlt = g.EmailContactoAlternativo,
+                        });
+
             return await query.ToListAsync();
         }
 
         public async Task<DTOCliente> GetViewClienteByID(int id)
         {
-            var cliente = await _context.Clientes
+            var cliente = await _context.ViewClientes
                 .AsNoTracking()
-                .Include(x => x.IdCiudadNavigation)
-                .Include(x => x.IdContactoAlternativoNavigation)
-                //.Include(x => x.IdCiudadNavigation.IdProvinciaNavigation)
-                .FirstOrDefaultAsync(x => x.NroDni == id);
+                .FirstOrDefaultAsync(x => x.Dni == id);
             DTOCliente comando = new DTOCliente();
 
             if (cliente != null)
             {
-                comando.NroDni = cliente.NroDni;
+                comando.Dni = cliente.Dni;
                 comando.Nombres = cliente.Nombres;
                 comando.Apellidos = cliente.Apellidos;
-                comando.Direccion = cliente.Direccion;
-                comando.Numero = cliente.Numero;
-                comando.CodigoPostal = cliente.CodigoPostal;
+                comando.FechaDeNacimiento = cliente.FechaDeNacimiento;
                 comando.Telefono = cliente.Telefono;
                 comando.Email = cliente.Email;
-                comando.Activo = cliente.Activo;
-                comando.Ciudad = cliente.IdCiudadNavigation.Ciudad;
-                comando.Provincia = cliente.IdCiudadNavigation.IdProvinciaNavigation.Provincia1;
-                comando.TelContAlt = cliente.IdContactoAlternativoNavigation.Telefono;
-                comando.EmailContAlt = cliente.IdContactoAlternativoNavigation.Email;
-                comando.ContactoAlternativo = cliente.IdContactoAlternativoNavigation.Nombres + " " + cliente.IdContactoAlternativoNavigation.Apellidos;
+                comando.Direccion = cliente.Dirección;
+                comando.CodigoPostal = cliente.CodigoPostal;
+                comando.Ciudad = cliente.Ciudad;
+                comando.Provincia = cliente.Provincia;
                 comando.PuntosIniciales = cliente.PuntosIniciales;
-                comando.FechaDeNacimiento = cliente.FechaDeNacimiento;
+                comando.PuntosActuales = cliente.PuntosActuales;
+                comando.CantidadDePrestamos = cliente.CantidadDePrestamos;
+                comando.Scoring = cliente.Scoring;
+                comando.BeneficioScoring = cliente.BeneficioScoring;
+                comando.ContactoAlternativo = cliente.ContactoAlternativo;
+                comando.Activo = cliente.Activo;
+                comando.TelContAlt = cliente.TelefonoContactoAlternativo;
+                comando.EmailContAlt = cliente.EmailContactoAlternativo;
             }
             return comando;
 

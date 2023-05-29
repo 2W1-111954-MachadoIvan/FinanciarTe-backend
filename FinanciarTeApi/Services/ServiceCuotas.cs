@@ -38,7 +38,6 @@ namespace FinanciarTeApi.Services
                 cuota.montoAbonado = comando.MontoAbonado;
                 cuota.fechaPago = comando.FechaPago;
                 cuota.cuotaVencida = comando.CuotaVencida == true ? "Vencida" : "En plazo";
-                cuota.puntos = _context.Puntos.Where(c=>c.IdPuntos == comando.IdPuntos).Select(c=>c.CantidadPuntos).FirstOrDefault();
                 cuota.idTransaccion = comando.IdTransaccion;
             }
 
@@ -62,7 +61,6 @@ namespace FinanciarTeApi.Services
                                           cuotaVencida = c.FechaPago > c.FechaVencimiento ? "Vencida" : 
                                                          c.FechaPago == null && DateTime.Now > c.FechaVencimiento? "Vencida" :
                                                          c.FechaPago == null && DateTime.Now < c.FechaVencimiento ? "En plazo" : "En plazo",
-                                          puntos = _context.Puntos.Where(x => x.IdPuntos == c.IdPuntos).Select(x => x.CantidadPuntos).FirstOrDefault(),
                                           idTransaccion = c.IdTransaccion
                                       }).ToListAsync();
             return cuotas;
@@ -104,7 +102,6 @@ namespace FinanciarTeApi.Services
                     cuota.MontoAbonado = dc.montoAbonado;
                     cuota.IdTransaccion = idTransaccion;
                     cuota.IdDetalleTransaccion = idDetalleTransaccion;
-                    cuota.IdPuntos = cuota.CuotaVencida == true ? 1 : 2;
 
                     _context.Cuotas.Update(cuota);
                     await _context.SaveChangesAsync();
@@ -145,7 +142,6 @@ namespace FinanciarTeApi.Services
                     cuota.FechaPago = comando.fechaPago;
                     cuota.MontoAbonado = dc.montoAbonado;
                     cuota.CuotaVencida = comando.fechaPago > cuota.FechaVencimiento ? true : false;
-                    cuota.IdPuntos = cuota.CuotaVencida == true ? 2 : 1;
 
 
                     _context.Cuotas.Update(cuota);
