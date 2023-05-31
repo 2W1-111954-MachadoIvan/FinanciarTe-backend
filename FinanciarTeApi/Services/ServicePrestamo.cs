@@ -38,6 +38,7 @@ namespace FinanciarTeApi.Services
                             MontoOtorgado = g.MontoOtorgado,
                             MontoADevolver = g.MontoADevolver,
                             Cuotas = g.Cuotas,
+                            ValorDeLaCuota = g.ValorDeLaCuota,
                             VencimientoPrimeraCuota = g.VencimientoPrimeraCuota,
                             VencimientoUltimaCuota = g.VencimientoUltimaCuota,
                             CuotasPagas = g.CuotasPagas,
@@ -75,7 +76,7 @@ namespace FinanciarTeApi.Services
             return await query.ToListAsync();
         }
 
-        public async Task<DTOPrestamo> GetPrestamoByID(int id)
+        public async Task<DTOPrestamoCuotas> GetPrestamoCuotasByID(int id)
         {
             var prestamo = await _context.Prestamos.Where(c=>c.IdPrestamo == id).FirstOrDefaultAsync();
 
@@ -99,7 +100,7 @@ namespace FinanciarTeApi.Services
                                           //puntos = c.IdPuntosNavigation.CantidadPuntos
                                       }).ToListAsync();
 
-            DTOPrestamo comando = new DTOPrestamo();
+            DTOPrestamoCuotas comando = new DTOPrestamoCuotas();
 
             if(prestamo != null)
             {
@@ -123,6 +124,35 @@ namespace FinanciarTeApi.Services
             }
 
             return comando;
+        }
+
+        public async Task<DTOPrestamo> getPrestamosByIdToMod(int id)
+        {
+            var prestamo = await _context.Prestamos
+                                 .Where(c => c.IdPrestamo == id)
+                                 .Select(g => new DTOPrestamo
+                                 {
+                                    idPrestamo = g.IdPrestamo,
+                                    idCliente = g.IdCliente,
+                                    montoOtorgado = g.MontoOtorgado,
+                                    MontoADevolver = g.MontoADevolver ,
+                                    Cuotas = g.Cuotas ,
+                                    ValorCuota = g.ValorCuota,
+                                    DiaVencimientoCuota = g.DiaVencimientoCuota ,
+                                    idScoring = g.IdScoring,
+                                    IndiceInteres = g.IndiceInteres,
+                                    RefinanciaDeuda = g.RefinanciaDeuda,
+                                    IdPrestamoRefinanciado = g.IdPrestamoRefinanciado,
+                                    idTransaccion = g.IdTransaccion ,
+                                    idEntidadFinanciera = g.IdTransaccionNavigation.IdEntidadFinanciera,
+                                    idCategoria = 3,
+                                    Fecha = g.IdTransaccionNavigation.FechaTransaccion
+                                 })
+                                 .FirstOrDefaultAsync();
+
+
+
+            return prestamo;
         }
 
         public async Task<ResultadoBase> RegistrarPrestamo(ComandoPrestamo comando)
@@ -154,7 +184,9 @@ namespace FinanciarTeApi.Services
                 {
                     IdCliente = comando.idCliente,
                     MontoOtorgado = comando.montoOtorgado,
+                    MontoADevolver = comando.MontoADevolver,
                     Cuotas = comando.Cuotas,
+                    ValorCuota = comando.ValorCuota,
                     DiaVencimientoCuota = comando.DiaVencimientoCuota,
                     IdScoring = comando.idScoring,
                     IndiceInteres = comando.IndiceInteres,
@@ -172,7 +204,7 @@ namespace FinanciarTeApi.Services
                 {
                     Cuota cuota = new Cuota();
                     cuota.NumeroCuota = i;
-                    cuota.MontoCuota = (comando.montoOtorgado*(1+comando.IndiceInteres)) / comando.Cuotas;
+                    cuota.MontoCuota = comando.ValorCuota;
                     cuota.IdPrestamo = idPrestamo;
                     cuota.IdCliente = comando.idCliente;
 
@@ -197,7 +229,7 @@ namespace FinanciarTeApi.Services
         {
             try
             {
-                var transaccion = _context.Transacciones.Where(c => c.IdTransaccion == comando.idTransaccion).FirstOrDefault();
+                var transaccion = await _context.Transacciones.Where(c => c.IdTransaccion.Equals(comando.idTransaccion)).FirstOrDefaultAsync();
 
                 transaccion.FechaTransaccion = comando.Fecha;
                 transaccion.IdEntidadFinanciera = comando.idEntidadFinanciera;
@@ -205,16 +237,18 @@ namespace FinanciarTeApi.Services
                 _context.Transacciones.Update(transaccion);
                 await _context.SaveChangesAsync();
 
-                var dt = _context.DetalleTransacciones.Where(c => c.IdTransaccion == comando.idTransaccion).FirstOrDefault();
+                var dt = await _context.DetalleTransacciones.Where(c => c.IdTransaccion.Equals(comando.idTransaccion)).FirstOrDefaultAsync();
 
-                dt.Monto = comando.montoOtorgado;
+                dt.Monto = 0 - comando.montoOtorgado;
 
                 _context.DetalleTransacciones.Update(dt);
                 await _context.SaveChangesAsync();
 
-                var p = _context.Prestamos.Where(c => c.IdPrestamo == comando.idPrestamo).FirstOrDefault();
+                var p = await _context.Prestamos.Where(c => c.IdPrestamo.Equals(comando.idPrestamo)).FirstOrDefaultAsync();
 
                 p.MontoOtorgado = comando.montoOtorgado;
+                p.MontoADevolver = comando.MontoADevolver;
+                p.ValorCuota = comando.ValorCuota;
                 p.Cuotas = comando.Cuotas;
                 p.DiaVencimientoCuota = comando.DiaVencimientoCuota;
                 p.IdScoring = comando.idScoring;
@@ -225,11 +259,11 @@ namespace FinanciarTeApi.Services
                 _context.Prestamos.Update(p);
                 await _context.SaveChangesAsync();
 
-                var cuotas = _context.Cuotas.Where(c => c.IdPrestamo == comando.idPrestamo).ToList();
+                var cuotas = await _context.Cuotas.Where(c => c.IdPrestamo.Equals(comando.idPrestamo)).ToListAsync();
 
                 foreach (var cuota in cuotas)
                 {
-                    cuota.MontoCuota = (comando.montoOtorgado * (1 + comando.IndiceInteres)) / comando.Cuotas;
+                    cuota.MontoCuota = comando.ValorCuota;
 
                     DateTime fechaVencimiento = (DateTime)cuota.FechaVencimiento;
                     fechaVencimiento = new DateTime(fechaVencimiento.Year, fechaVencimiento.Month, (int)comando.DiaVencimientoCuota);

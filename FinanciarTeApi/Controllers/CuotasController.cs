@@ -21,7 +21,13 @@ namespace FinanciarTeApi.Controllers
             return Ok(await _servicioCobroCuotas.GetCuotaByID(id));
         }
 
-        [HttpGet("getCuotasCliente/{id}")]
+        [HttpGet("getViewCuotasCliente/{id}")]
+        public async Task<ActionResult> GetViewCuotasByCliente(int id)
+        {
+            return Ok(await _servicioCobroCuotas.GetViewCuotasByCliente(id));
+        }
+
+        [HttpGet("getCuotasByCliente/{id}")]
         public async Task<ActionResult> GetCuotasByCliente(int id)
         {
             return Ok(await _servicioCobroCuotas.GetCuotasByCliente(id));

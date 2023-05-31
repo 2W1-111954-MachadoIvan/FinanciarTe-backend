@@ -19,6 +19,10 @@ public partial class Prestamo
 
     public decimal? IndiceInteres { get; set; }
 
+    public decimal? MontoADevolver { get; set; }
+
+    public decimal? ValorCuota { get; set; }
+
     public bool? RefinanciaDeuda { get; set; }
 
     public long? IdPrestamoRefinanciado { get; set; }

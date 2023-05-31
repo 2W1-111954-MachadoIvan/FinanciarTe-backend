@@ -20,48 +20,74 @@ namespace FinanciarTeApi.Services
             throw new NotImplementedException();
         }
 
-        public async Task<DTOCuota> GetCuotaByID(int id)
+        public async Task<Cuota> GetCuotaByID(int id)
         {
             var comando = await _context.Cuotas
                                       .Where(c => c.IdCuota == id)
                                       .FirstOrDefaultAsync();
 
-            DTOCuota cuota = new DTOCuota();
+            Cuota cuota = new Cuota();
 
             if(comando != null)
             {
-                cuota.idCuota = comando.IdCuota;
-                cuota.idCliente = comando.IdCliente;
-                cuota.idPrestamo = comando.IdPrestamo;
-                cuota.nroCuota = comando.NumeroCuota;
+                cuota.IdCuota = comando.IdCuota;
+                cuota.IdCliente = comando.IdCliente;
+                cuota.IdPrestamo = comando.IdPrestamo;
+                cuota.NumeroCuota = comando.NumeroCuota;
                 cuota.MontoCuota = comando.MontoCuota;
-                cuota.montoAbonado = comando.MontoAbonado;
-                cuota.fechaPago = comando.FechaPago;
-                cuota.cuotaVencida = comando.CuotaVencida == true ? "Vencida" : "En plazo";
-                cuota.idTransaccion = comando.IdTransaccion;
+                cuota.MontoAbonado = comando.MontoAbonado;
+                cuota.FechaPago = comando.FechaPago;
+                cuota.CuotaVencida = comando.CuotaVencida;
+                cuota.IdTransaccion = comando.IdTransaccion;
+                cuota.IdDetalleTransaccion = comando.IdDetalleTransaccion;
             }
 
             return cuota;
         }
 
-        public async Task<List<DTOCuota>> GetCuotasByCliente(int id)
+        public async Task<Cuota> GetCuotasByCliente(int id)
         {
-            List<DTOCuota> cuotas = await _context.Cuotas
-                                      .Where(c => c.IdCliente == id)
-                                      .Select(c => new DTOCuota
+            var comando = await _context.Cuotas
+                                      .Where(c => c.IdCliente == id && c.MontoAbonado == 0)
+                                      .FirstOrDefaultAsync();
+
+            Cuota cuota = new Cuota();
+
+            if (comando != null)
+            {
+                cuota.IdCuota = comando.IdCuota;
+                cuota.IdCliente = comando.IdCliente;
+                cuota.IdPrestamo = comando.IdPrestamo;
+                cuota.NumeroCuota = comando.NumeroCuota;
+                cuota.MontoCuota = comando.MontoCuota;
+                cuota.MontoAbonado = comando.MontoAbonado;
+                cuota.FechaPago = comando.FechaPago;
+                cuota.CuotaVencida = comando.CuotaVencida;
+                cuota.IdTransaccion = comando.IdTransaccion;
+                cuota.IdDetalleTransaccion = comando.IdDetalleTransaccion;
+            }
+
+            return cuota;
+        }
+
+        public async Task<List<ViewCuotasCliente>> GetViewCuotasByCliente(int id)
+        {
+            List<ViewCuotasCliente> cuotas = await _context.ViewCuotas
+                                      .Where(c => c.Dni == id)
+                                      .Select(c => new ViewCuotasCliente
                                       {
-                                          idCuota = c.IdCuota,
-                                          idCliente = c.IdCliente,
-                                          idPrestamo = c.IdPrestamo,
-                                          nroCuota = c.NumeroCuota,
-                                          MontoCuota = c.MontoCuota,
-                                          FechaVencimiento = c.FechaVencimiento,
-                                          montoAbonado = c.MontoAbonado,
-                                          fechaPago = c.FechaPago,
-                                          cuotaVencida = c.FechaPago > c.FechaVencimiento ? "Vencida" : 
-                                                         c.FechaPago == null && DateTime.Now > c.FechaVencimiento? "Vencida" :
-                                                         c.FechaPago == null && DateTime.Now < c.FechaVencimiento ? "En plazo" : "En plazo",
-                                          idTransaccion = c.IdTransaccion
+                                          Dni = c.Dni,
+                                          Cliente = c.Cliente,
+                                          IdPrestamo = c.IdPrestamo,
+                                          CuotaN = c.CuotaN,
+                                          FechaDeVencimiento = c.FechaDeVencimiento,
+                                          MontoDeCuota = c.MontoDeCuota,
+                                          FechaDePago = c.FechaDePago,
+                                          MontoAbonado = c.MontoAbonado,
+                                          CuotaVencida = c.CuotaVencida,
+                                          IdTransacción = c.IdTransacción,
+                                          IdDetalleTransacción = c.IdDetalleTransacción,
+                                          PuntosOtorgados = c.PuntosOtorgados,
                                       }).ToListAsync();
             return cuotas;
         }

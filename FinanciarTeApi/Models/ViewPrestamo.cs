@@ -23,6 +23,8 @@ public partial class ViewPrestamo
 
     public long? Cuotas { get; set; }
 
+    public decimal? ValorDeLaCuota { get; set; }
+
     public DateTime? VencimientoPrimeraCuota { get; set; }
 
     public DateTime? VencimientoUltimaCuota { get; set; }

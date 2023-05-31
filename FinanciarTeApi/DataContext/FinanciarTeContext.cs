@@ -30,6 +30,8 @@ public partial class FinanciarTeContext : DbContext
 
     public virtual DbSet<EntidadesFinanciera> EntidadesFinancieras { get; set; }
 
+    public virtual DbSet<HistoricosIndice> HistoricosIndices { get; set; }
+
     public virtual DbSet<Prestamo> Prestamos { get; set; }
 
     public virtual DbSet<Provincia> Provincias { get; set; }
@@ -53,6 +55,8 @@ public partial class FinanciarTeContext : DbContext
     public virtual DbSet<ViewCliente> ViewClientes { get; set; }
 
     public virtual DbSet<ViewCuota> ViewCuotas { get; set; }
+
+    public virtual DbSet<ViewHistoricoDolaIndice> ViewHistoricoDolaIndices { get; set; }
 
     public virtual DbSet<ViewHistoricoPunto> ViewHistoricoPuntos { get; set; }
 
@@ -222,6 +226,24 @@ public partial class FinanciarTeContext : DbContext
                 .HasConstraintName("FK_ENTIDADES_FINANCIERAS_TIPOS_ENTIDAD_FINANCIERA");
         });
 
+        modelBuilder.Entity<HistoricosIndice>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("HISTORICOS_INDICE");
+
+            entity.Property(e => e.Fecha).HasColumnType("date");
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("id");
+            entity.Property(e => e.ValorDolar)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Valor_dolar");
+            entity.Property(e => e.ValorDolarBlue)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Valor_dolar_blue");
+        });
+
         modelBuilder.Entity<Prestamo>(entity =>
         {
             entity.HasKey(e => e.IdPrestamo);
@@ -237,11 +259,17 @@ public partial class FinanciarTeContext : DbContext
             entity.Property(e => e.IndiceInteres)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Indice_interes");
+            entity.Property(e => e.MontoADevolver)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Monto_a_devolver");
             entity.Property(e => e.MontoOtorgado).HasColumnName("Monto_otorgado");
             entity.Property(e => e.MotivoAnulacion)
                 .HasMaxLength(500)
                 .HasColumnName("Motivo_anulacion");
             entity.Property(e => e.RefinanciaDeuda).HasColumnName("Refinancia_Deuda");
+            entity.Property(e => e.ValorCuota)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Valor_cuota");
 
             entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.Prestamos)
                 .HasForeignKey(d => d.IdCliente)
@@ -439,6 +467,7 @@ public partial class FinanciarTeContext : DbContext
                 .HasMaxLength(8)
                 .IsUnicode(false)
                 .HasColumnName("Cuota Vencida");
+            entity.Property(e => e.Dni).HasColumnName("DNI");
             entity.Property(e => e.FechaDePago)
                 .HasMaxLength(30)
                 .HasColumnName("Fecha de Pago");
@@ -455,6 +484,22 @@ public partial class FinanciarTeContext : DbContext
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Monto de cuota");
             entity.Property(e => e.PuntosOtorgados).HasColumnName("Puntos otorgados");
+        });
+
+        modelBuilder.Entity<ViewHistoricoDolaIndice>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("view_HistoricoDola_Indice");
+
+            entity.Property(e => e.Fecha).HasColumnType("date");
+            entity.Property(e => e.Indice).HasColumnType("decimal(10, 4)");
+            entity.Property(e => e.ValorDolar)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Valor_dolar");
+            entity.Property(e => e.ValorDolarBlue)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Valor_dolar_blue");
         });
 
         modelBuilder.Entity<ViewHistoricoPunto>(entity =>
@@ -489,7 +534,7 @@ public partial class FinanciarTeContext : DbContext
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Indice FinanciarTe");
             entity.Property(e => e.MontoADevolver)
-                .HasColumnType("decimal(31, 2)")
+                .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Monto a devolver");
             entity.Property(e => e.MontoAbonado)
                 .HasColumnType("decimal(38, 2)")
@@ -498,6 +543,9 @@ public partial class FinanciarTeContext : DbContext
             entity.Property(e => e.SaldoPendiente)
                 .HasColumnType("decimal(38, 2)")
                 .HasColumnName("Saldo Pendiente");
+            entity.Property(e => e.ValorDeLaCuota)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Valor de la Cuota");
             entity.Property(e => e.VencimientoPrimeraCuota)
                 .HasColumnType("date")
                 .HasColumnName("Vencimiento Primera Cuota");

@@ -5,7 +5,9 @@
         public long idPrestamo { get; set; }
         public long idCliente { get; set; }
         public long montoOtorgado { get; set; }
+        public decimal? MontoADevolver { get; set; }
         public long Cuotas { get; set; }
+        public decimal? ValorCuota { get; set; }
         public long DiaVencimientoCuota { get; set; }
         public long idScoring { get; set; }
         public decimal IndiceInteres { get; set; }

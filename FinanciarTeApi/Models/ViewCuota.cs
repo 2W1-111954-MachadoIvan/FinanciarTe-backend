@@ -5,6 +5,8 @@ namespace FinanciarTeApi.Models;
 
 public partial class ViewCuota
 {
+    public long? Dni { get; set; }
+
     public string? Cliente { get; set; }
 
     public long? IdPrestamo { get; set; }

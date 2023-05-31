@@ -21,16 +21,22 @@ namespace FinanciarTeApi.Controllers
             return Ok(await _servicioPrestamo.GetPrestamosByCliente(id));
         }
 
+        [HttpGet("getPrestamosByIdToMod/{id}")]
+        public async Task<ActionResult> getPrestamosByIdToMod(int id)
+        {
+            return Ok(await _servicioPrestamo.getPrestamosByIdToMod(id));
+        }
+
         [HttpGet("getPrestamos/")]
         public async Task<ActionResult> GetPrestamos()
         {
             return Ok(await _servicioPrestamo.GetPrestamos());
         }
 
-        [HttpGet("getPrestamoById/{id}")]
-        public async Task<ActionResult> GetPrestamosById(int id)
+        [HttpGet("getPrestamoCuotasById/{id}")]
+        public async Task<ActionResult> GetPrestamosCuotasById(int id)
         {
-            return Ok(await _servicioPrestamo.GetPrestamoByID(id));
+            return Ok(await _servicioPrestamo.GetPrestamoCuotasByID(id));
         }
 
         [HttpPost("registrarPrestamo/")]
