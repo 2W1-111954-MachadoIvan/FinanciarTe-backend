@@ -29,7 +29,7 @@ public partial class Prestamo
 
     public long? IdTransaccion { get; set; }
 
-    public bool? Anulado { get; set; }
+    public bool Anulado { get; set; }
 
     public string? MotivoAnulacion { get; set; }
 

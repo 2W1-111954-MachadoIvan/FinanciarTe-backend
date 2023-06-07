@@ -20,4 +20,6 @@ public partial class Transaccione
     public virtual EntidadesFinanciera? IdEntidadFinancieraNavigation { get; set; }
 
     public virtual ICollection<Prestamo> Prestamos { get; } = new List<Prestamo>();
+
+    public virtual ICollection<PuntosPorCliente> PuntosPorClientes { get; } = new List<PuntosPorCliente>();
 }

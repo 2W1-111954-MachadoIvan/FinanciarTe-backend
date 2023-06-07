@@ -192,11 +192,23 @@ namespace FinanciarTeApi.Services
                     IndiceInteres = comando.IndiceInteres,
                     RefinanciaDeuda = comando.RefinanciaDeuda,
                     IdPrestamoRefinanciado = comando.IdPrestamoRefinanciado,
-                    IdTransaccion = idTransaccion
+                    IdTransaccion = idTransaccion,
+                    Anulado = false
                 };
 
                 await _context.Prestamos.AddAsync(p);
                 await _context.SaveChangesAsync();
+
+                if(p.IdPrestamoRefinanciado != null)
+                {
+                    var pRefin = _context.Prestamos.Where(c => c.IdPrestamo.Equals(p.IdPrestamoRefinanciado)).FirstOrDefault();
+
+                    pRefin.Anulado = true;
+                    pRefin.MotivoAnulacion = "Refinanciado con prestamo id: " + p.IdPrestamo;
+
+                    _context.Prestamos.Update(pRefin);
+                    await _context.SaveChangesAsync();
+                }
 
                 var idPrestamo = _context.Prestamos.Where(c => c.IdPrestamo.Equals(p.IdPrestamo)).Select(c => c.IdPrestamo).FirstOrDefault();
 
@@ -258,6 +270,17 @@ namespace FinanciarTeApi.Services
 
                 _context.Prestamos.Update(p);
                 await _context.SaveChangesAsync();
+
+                if (p.IdPrestamoRefinanciado != null)
+                {
+                    var pRefin = _context.Prestamos.Where(c => c.IdPrestamo.Equals(p.IdPrestamoRefinanciado)).FirstOrDefault();
+
+                    pRefin.Anulado = true;
+                    pRefin.MotivoAnulacion = "Refinanciado con prestamo id: " + p.IdPrestamo;
+
+                    _context.Prestamos.Update(pRefin);
+                    await _context.SaveChangesAsync();
+                }
 
                 var cuotas = await _context.Cuotas.Where(c => c.IdPrestamo.Equals(comando.idPrestamo)).ToListAsync();
 

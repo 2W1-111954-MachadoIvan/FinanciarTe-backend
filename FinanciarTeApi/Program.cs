@@ -17,6 +17,7 @@ builder.Services.AddScoped<IServiceTiposEntidadFinanciera, ServiceTiposEntidadFi
 builder.Services.AddScoped<IServiceTiposUsuarios, ServiceTiposUsuarios>();
 builder.Services.AddScoped<IServiceTipoTransaccion, ServiceTipoTransaccion>();
 builder.Services.AddScoped<IServiceDolar, ServiceDolar>();
+builder.Services.AddScoped<IServiceReportes, ServiceReportes>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FinanciarTeContext>(x => x.UseSqlServer(connectionString));

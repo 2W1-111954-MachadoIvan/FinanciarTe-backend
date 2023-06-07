@@ -11,6 +11,8 @@ public partial class ViewCuota
 
     public long? IdPrestamo { get; set; }
 
+    public long IdCuota { get; set; }
+
     public long? CuotaN { get; set; }
 
     public string? FechaDeVencimiento { get; set; }
@@ -22,6 +24,8 @@ public partial class ViewCuota
     public decimal? MontoAbonado { get; set; }
 
     public string CuotaVencida { get; set; } = null!;
+
+    public int? DíasVencidos { get; set; }
 
     public long? IdTransacción { get; set; }
 

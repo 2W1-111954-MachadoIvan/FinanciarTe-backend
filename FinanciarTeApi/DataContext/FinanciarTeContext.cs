@@ -52,15 +52,21 @@ public partial class FinanciarTeContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
+    public virtual DbSet<ViewBalance> ViewBalances { get; set; }
+
     public virtual DbSet<ViewCliente> ViewClientes { get; set; }
 
     public virtual DbSet<ViewCuota> ViewCuotas { get; set; }
+
+    public virtual DbSet<ViewCuotasMesEnCurso> ViewCuotasMesEnCursos { get; set; }
 
     public virtual DbSet<ViewHistoricoDolaIndice> ViewHistoricoDolaIndices { get; set; }
 
     public virtual DbSet<ViewHistoricoPunto> ViewHistoricoPuntos { get; set; }
 
     public virtual DbSet<ViewPrestamo> ViewPrestamos { get; set; }
+
+    public virtual DbSet<ViewRecaudacionMensual> ViewRecaudacionMensuals { get; set; }
 
     public virtual DbSet<ViewTransaccionesConDet> ViewTransaccionesConDets { get; set; }
 
@@ -309,34 +315,32 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<PuntosPorCliente>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("PUNTOS_POR_CLIENTES");
+            entity.HasKey(e => e.IdPuntosAsignados);
 
+            entity.ToTable("PUNTOS_POR_CLIENTES");
+
+            entity.Property(e => e.IdPuntosAsignados).HasColumnName("id_puntos_asignados");
             entity.Property(e => e.IdCliente).HasColumnName("id_Cliente");
             entity.Property(e => e.IdDetalleTransaccion).HasColumnName("id_Detalle_Transaccion");
             entity.Property(e => e.IdPuntaje).HasColumnName("id_puntaje");
-            entity.Property(e => e.IdPuntosAsignados)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("id_puntos_asignados");
             entity.Property(e => e.IdTransaccion).HasColumnName("id_Transaccion");
             entity.Property(e => e.MotivoAnulacion)
                 .HasMaxLength(500)
                 .HasColumnName("Motivo_anulacion");
 
-            entity.HasOne(d => d.IdClienteNavigation).WithMany()
+            entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.PuntosPorClientes)
                 .HasForeignKey(d => d.IdCliente)
                 .HasConstraintName("FK_PUNTOS_POR_CLIENTES_CLIENTES");
 
-            entity.HasOne(d => d.IdDetalleTransaccionNavigation).WithMany()
+            entity.HasOne(d => d.IdDetalleTransaccionNavigation).WithMany(p => p.PuntosPorClientes)
                 .HasForeignKey(d => d.IdDetalleTransaccion)
                 .HasConstraintName("FK_PUNTOS_POR_CLIENTES_DETALLE_TRANSACCIONES");
 
-            entity.HasOne(d => d.IdPuntajeNavigation).WithMany()
+            entity.HasOne(d => d.IdPuntajeNavigation).WithMany(p => p.PuntosPorClientes)
                 .HasForeignKey(d => d.IdPuntaje)
                 .HasConstraintName("FK_PUNTOS_POR_CLIENTES_PUNTAJES");
 
-            entity.HasOne(d => d.IdTransaccionNavigation).WithMany()
+            entity.HasOne(d => d.IdTransaccionNavigation).WithMany(p => p.PuntosPorClientes)
                 .HasForeignKey(d => d.IdTransaccion)
                 .HasConstraintName("FK_PUNTOS_POR_CLIENTES_TRANSACCIONES");
         });
@@ -420,6 +424,22 @@ public partial class FinanciarTeContext : DbContext
                 .HasConstraintName("FK_USUARIOS_TIPOS_USUARIOS");
         });
 
+        modelBuilder.Entity<ViewBalance>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("view_Balance");
+
+            entity.Property(e => e.Descripción).HasMaxLength(500);
+            entity.Property(e => e.IdEntidadFinanciera).HasColumnName("ID Entidad Financiera");
+            entity.Property(e => e.MontoActual)
+                .HasColumnType("decimal(38, 2)")
+                .HasColumnName("Monto actual");
+            entity.Property(e => e.MontoInicial)
+                .HasColumnType("decimal(38, 2)")
+                .HasColumnName("Monto_inicial");
+        });
+
         modelBuilder.Entity<ViewCliente>(entity =>
         {
             entity
@@ -468,12 +488,14 @@ public partial class FinanciarTeContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("Cuota Vencida");
             entity.Property(e => e.Dni).HasColumnName("DNI");
+            entity.Property(e => e.DíasVencidos).HasColumnName("Días Vencidos");
             entity.Property(e => e.FechaDePago)
                 .HasMaxLength(30)
                 .HasColumnName("Fecha de Pago");
             entity.Property(e => e.FechaDeVencimiento)
                 .HasMaxLength(30)
                 .HasColumnName("Fecha de Vencimiento");
+            entity.Property(e => e.IdCuota).HasColumnName("ID Cuota");
             entity.Property(e => e.IdDetalleTransacción).HasColumnName("ID Detalle Transacción");
             entity.Property(e => e.IdPrestamo).HasColumnName("ID Prestamo");
             entity.Property(e => e.IdTransacción).HasColumnName("ID Transacción");
@@ -484,6 +506,17 @@ public partial class FinanciarTeContext : DbContext
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Monto de cuota");
             entity.Property(e => e.PuntosOtorgados).HasColumnName("Puntos otorgados");
+        });
+
+        modelBuilder.Entity<ViewCuotasMesEnCurso>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("view_CuotasMesEnCurso");
+
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(15)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<ViewHistoricoDolaIndice>(entity =>
@@ -511,6 +544,7 @@ public partial class FinanciarTeContext : DbContext
             entity.Property(e => e.Cliente).HasMaxLength(1002);
             entity.Property(e => e.Descripción).HasMaxLength(500);
             entity.Property(e => e.Detalle).HasMaxLength(500);
+            entity.Property(e => e.Dni).HasColumnName("DNI");
             entity.Property(e => e.Fecha).HasColumnType("datetime");
         });
 
@@ -552,6 +586,20 @@ public partial class FinanciarTeContext : DbContext
             entity.Property(e => e.VencimientoUltimaCuota)
                 .HasColumnType("date")
                 .HasColumnName("Vencimiento Ultima Cuota");
+        });
+
+        modelBuilder.Entity<ViewRecaudacionMensual>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("view_RecaudacionMensual");
+
+            entity.Property(e => e.RecaudaciónEsperada)
+                .HasColumnType("decimal(38, 2)")
+                .HasColumnName("Recaudación esperada");
+            entity.Property(e => e.RecaudaciónMensual)
+                .HasColumnType("decimal(38, 2)")
+                .HasColumnName("Recaudación mensual");
         });
 
         modelBuilder.Entity<ViewTransaccionesConDet>(entity =>

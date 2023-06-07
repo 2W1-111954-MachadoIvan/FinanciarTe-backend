@@ -38,4 +38,6 @@ public partial class Cliente
     public virtual ContactosAlternativo? IdContactoAlternativoNavigation { get; set; }
 
     public virtual ICollection<Prestamo> Prestamos { get; } = new List<Prestamo>();
+
+    public virtual ICollection<PuntosPorCliente> PuntosPorClientes { get; } = new List<PuntosPorCliente>();
 }

@@ -5,6 +5,8 @@ namespace FinanciarTeApi.Models;
 
 public partial class ViewHistoricoPunto
 {
+    public long? Dni { get; set; }
+
     public string? Cliente { get; set; }
 
     public DateTime? Fecha { get; set; }

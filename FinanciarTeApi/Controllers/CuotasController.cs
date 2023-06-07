@@ -27,10 +27,10 @@ namespace FinanciarTeApi.Controllers
             return Ok(await _servicioCobroCuotas.GetViewCuotasByCliente(id));
         }
 
-        [HttpGet("getCuotasByCliente/{id}")]
-        public async Task<ActionResult> GetCuotasByCliente(int id)
+        [HttpGet("getCuotasPendientesByCliente/{id}")]
+        public async Task<ActionResult> GetCuotasPendientesByCliente(int id)
         {
-            return Ok(await _servicioCobroCuotas.GetCuotasByCliente(id));
+            return Ok(await _servicioCobroCuotas.GetCuotasPendientesByCliente(id));
         }
 
         [HttpPost("registrarCuotas/")]

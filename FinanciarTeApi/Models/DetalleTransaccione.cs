@@ -22,4 +22,6 @@ public partial class DetalleTransaccione
     public virtual Categoria? IdCategoriaNavigation { get; set; }
 
     public virtual Transaccione? IdTransaccionNavigation { get; set; }
+
+    public virtual ICollection<PuntosPorCliente> PuntosPorClientes { get; } = new List<PuntosPorCliente>();
 }
