@@ -10,5 +10,6 @@ namespace FinanciarTeApi.Services
         Task<ResultadoBase> ModificarTransaccion(ComandoTransaccion transaccion);
         Task<List<DTOTransacciones>> GetListadoTransacciones();
         Task<DTOTransacciones_DetTr> GetTransaccionById(int id);
+        Task<ResultadoBase> DeleteSoftTransaccion(ComandoAnulaciones anulacion);
     }
 }

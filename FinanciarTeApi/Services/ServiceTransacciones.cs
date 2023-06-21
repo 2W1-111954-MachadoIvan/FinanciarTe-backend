@@ -20,7 +20,7 @@ namespace FinanciarTeApi.Services
 
         public async Task<List<DTOTransacciones>> GetListadoTransacciones()
         {
-            var query = (from tr in _context.Transacciones.AsNoTracking()
+            var query = (from tr in _context.Transacciones.AsNoTracking().Where(c=> c.Anulada == false || c.Anulada == null)
                          join dt in _context.DetalleTransacciones.AsNoTracking() on tr.IdTransaccion equals dt.IdTransaccion
                          join ef in _context.EntidadesFinancieras.AsNoTracking() on tr.IdEntidadFinanciera equals ef.IdEntidadFinanciera
                          join tef in _context.TiposEntidadFinancieras.AsNoTracking() on ef.IdTipoEntidad equals tef.IdTipoEntidad
@@ -157,6 +157,37 @@ namespace FinanciarTeApi.Services
             }
 
             return await Task.FromResult(new ResultadoBase { CodigoEstado = 200, Message = "Transacción modificada correctamente"/*Constantes.DefaultMessages.DefaultSuccesMessage.ToString()*/, Ok = true });
+        }
+
+        public async Task<ResultadoBase> DeleteSoftTransaccion(ComandoAnulaciones anulacion)
+        {
+            try
+            {
+                var transaccion = _context.Transacciones.Where(c => c.IdTransaccion == anulacion.id).FirstOrDefault();
+
+                transaccion.Anulada = true;
+                transaccion.MotivoAnulacion = anulacion.motivoAnulacion;
+
+                _context.Transacciones.Update(transaccion);
+                await _context.SaveChangesAsync();
+
+                var detTrans = _context.DetalleTransacciones.Where(c => c.IdTransaccion == anulacion.id).ToList();
+
+                foreach (DetalleTransaccione dt in  detTrans)
+                {
+                    dt.Anulado = true;
+                    dt.MotivoAnulacion = anulacion.motivoAnulacion;
+
+                    _context.DetalleTransacciones.Update(dt);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                return await Task.FromResult(new ResultadoBase { CodigoEstado = 500, Message = ex.Message, Ok = false });
+            }
+
+            return await Task.FromResult(new ResultadoBase { CodigoEstado = 200, Message = "Transacción anulada correctamente"/*Constantes.DefaultMessages.DefaultSuccesMessage.ToString()*/, Ok = true });
         }
     }
 }

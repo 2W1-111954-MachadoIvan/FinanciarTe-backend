@@ -29,6 +29,12 @@ namespace FinanciarTeApi.Controllers
             return Ok(await _servicioTransaccion.ModificarTransaccion(comando));
         }
 
+        [HttpPut("deleteSoftTransaccion")]
+        public async Task<ActionResult> DeleteSoftTransaccion(ComandoAnulaciones anulacion)
+        {
+            return Ok(await _servicioTransaccion.DeleteSoftTransaccion(anulacion));
+        }
+
         [HttpGet("getTransacciones")]
         public async Task<ActionResult> GetListadoTransacciones()
         {
