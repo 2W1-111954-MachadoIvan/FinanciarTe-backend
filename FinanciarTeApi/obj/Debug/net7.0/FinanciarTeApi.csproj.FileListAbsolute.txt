@@ -74,6 +74,7 @@ D:\Documents\GitHub\FinanciarTe-backend\FinanciarTeApi\obj\Debug\net7.0\refint\F
 D:\Documents\GitHub\FinanciarTe-backend\FinanciarTeApi\obj\Debug\net7.0\FinanciarTeApi.pdb
 D:\Documents\GitHub\FinanciarTe-backend\FinanciarTeApi\obj\Debug\net7.0\FinanciarTeApi.genruntimeconfig.cache
 D:\Documents\GitHub\FinanciarTe-backend\FinanciarTeApi\obj\Debug\net7.0\ref\FinanciarTeApi.dll
+D:\Documents\GitHub\FinanciarTe-backend\FinanciarTeApi\bin\Debug\net7.0\Newtonsoft.Json.dll
 D:\Documentos\GitHub\FinanciarTe-backend\FinanciarTeApi\bin\Debug\net7.0\appsettings.Development.json
 D:\Documentos\GitHub\FinanciarTe-backend\FinanciarTeApi\bin\Debug\net7.0\appsettings.json
 D:\Documentos\GitHub\FinanciarTe-backend\FinanciarTeApi\bin\Debug\net7.0\FinanciarTeApi.exe
@@ -151,4 +152,3 @@ D:\Documentos\GitHub\FinanciarTe-backend\FinanciarTeApi\obj\Debug\net7.0\refint\
 D:\Documentos\GitHub\FinanciarTe-backend\FinanciarTeApi\obj\Debug\net7.0\FinanciarTeApi.pdb
 D:\Documentos\GitHub\FinanciarTe-backend\FinanciarTeApi\obj\Debug\net7.0\FinanciarTeApi.genruntimeconfig.cache
 D:\Documentos\GitHub\FinanciarTe-backend\FinanciarTeApi\obj\Debug\net7.0\ref\FinanciarTeApi.dll
-D:\Documents\GitHub\FinanciarTe-backend\FinanciarTeApi\bin\Debug\net7.0\Newtonsoft.Json.dll

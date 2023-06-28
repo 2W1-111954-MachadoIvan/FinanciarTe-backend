@@ -10,7 +10,7 @@ namespace FinanciarTeApi.Services
 
         Task<List<DTODolarIndice>> GetMaxMinDolarIndice();
 
-        Task<List<DTOCliente>> GetClientesConMasPrestamos();
+        Task<List<DTOResumenPrestamos>> GetResumenPrestamos();
 
         Task<List<DTORecaudacion>> GetRecaudacionMensual();
 

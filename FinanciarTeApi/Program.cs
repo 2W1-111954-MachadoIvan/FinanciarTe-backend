@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IServiceCiudades, ServiceCiudades>();
 builder.Services.AddScoped<IServiceProvincia, ServiceProvincia>();
 builder.Services.AddScoped<IServiceCliente, ServiceCliente>();
@@ -18,6 +19,10 @@ builder.Services.AddScoped<IServiceTiposUsuarios, ServiceTiposUsuarios>();
 builder.Services.AddScoped<IServiceTipoTransaccion, ServiceTipoTransaccion>();
 builder.Services.AddScoped<IServiceDolar, ServiceDolar>();
 builder.Services.AddScoped<IServiceReportes, ServiceReportes>();
+builder.Services.AddScoped<IServiceRegistro, ServiceRegistro>();
+builder.Services.AddScoped<IServiceSecurity, ServiceSecurity>();
+builder.Services.AddScoped<IServiceUsuario, ServiceUsuario>();
+builder.Services.AddScoped<IServiceLogin, ServiceLogin>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FinanciarTeContext>(x => x.UseSqlServer(connectionString));

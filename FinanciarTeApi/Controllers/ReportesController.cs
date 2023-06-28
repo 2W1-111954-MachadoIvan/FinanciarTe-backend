@@ -27,10 +27,10 @@ namespace FinanciarTeApi.Controllers
             return Ok(await _serviceReportes.GetMaxMinDolarIndice());
         }
 
-        [HttpGet("getClientesConMasPrestamos")]
-        public async Task<ActionResult> GetClientesConMasPrestamos()
+        [HttpGet("getResumenPrestamos")]
+        public async Task<ActionResult> GetResumenPrestamos()
         {
-            return Ok(await _serviceReportes.GetClientesConMasPrestamos());
+            return Ok(await _serviceReportes.GetResumenPrestamos());
         }
 
         [HttpGet("getRecaudacionMensual")]

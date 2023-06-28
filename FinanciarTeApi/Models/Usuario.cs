@@ -7,17 +7,25 @@ public partial class Usuario
 {
     public long IdUsuarios { get; set; }
 
-    public string? Nombres { get; set; }
+    public string Nombres { get; set; } = null!;
 
-    public string? Apellidos { get; set; }
+    public string Apellidos { get; set; } = null!;
 
-    public string? Usuario1 { get; set; }
+    public string Calle { get; set; } = null!;
 
-    public long? Legajo { get; set; }
+    public long Numero { get; set; }
 
-    public bool? Activo { get; set; }
+    public long Telefono { get; set; }
 
-    public long? IdTipoUsuario { get; set; }
+    public long Legajo { get; set; }
 
-    public virtual TiposUsuario? IdTipoUsuarioNavigation { get; set; }
+    public string User { get; set; } = null!;
+
+    public byte[] Hashpass { get; set; } = null!;
+
+    public bool Activo { get; set; }
+
+    public long IdTipoUsuario { get; set; }
+
+    public virtual TiposUsuario IdTipoUsuarioNavigation { get; set; } = null!;
 }

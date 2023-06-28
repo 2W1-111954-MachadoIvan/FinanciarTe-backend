@@ -19,6 +19,8 @@ public partial class DetalleTransaccione
 
     public string? MotivoAnulacion { get; set; }
 
+    public virtual ICollection<Cuota> Cuota { get; } = new List<Cuota>();
+
     public virtual Categoria? IdCategoriaNavigation { get; set; }
 
     public virtual Transaccione? IdTransaccionNavigation { get; set; }

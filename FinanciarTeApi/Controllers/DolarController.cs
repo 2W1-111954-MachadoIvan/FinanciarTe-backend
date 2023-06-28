@@ -26,5 +26,11 @@ namespace FinanciarTeApi.Controllers
         {
             return Ok(await _servicioDolar.GetUltimoValorDolar());
         }
+
+        [HttpGet("getValorDolarHoy")]
+        public async Task<ActionResult> GetValorDolarHoy()
+        {
+            return Ok(await _servicioDolar.GetValorDolarHoy());
+        }
     }
 }

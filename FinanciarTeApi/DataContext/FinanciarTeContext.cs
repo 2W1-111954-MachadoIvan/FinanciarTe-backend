@@ -68,11 +68,13 @@ public partial class FinanciarTeContext : DbContext
 
     public virtual DbSet<ViewRecaudacionMensual> ViewRecaudacionMensuals { get; set; }
 
+    public virtual DbSet<ViewResumenPrestamo> ViewResumenPrestamos { get; set; }
+
     public virtual DbSet<ViewTransaccionesConDet> ViewTransaccionesConDets { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=financiartesrv1.database.windows.net,1433;Database=FinanciarTe;User Id=ivanmachadoob;Password=1V4n11--4th0s--;TrustServerCertificate=true;");
+        => optionsBuilder.UseSqlServer("Server=localhost; Database = FinanciarTe; User ID = ivanmachadoob; Password = 1V4n11--4th0s--; TrustServerCertificate = true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -150,7 +152,7 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<Cuota>(entity =>
         {
-            entity.HasKey(e => e.IdCuota).HasName("PK_COBROS_CUOTAS");
+            entity.HasKey(e => e.IdCuota);
 
             entity.ToTable("CUOTAS");
 
@@ -176,11 +178,19 @@ public partial class FinanciarTeContext : DbContext
 
             entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.Cuota)
                 .HasForeignKey(d => d.IdCliente)
-                .HasConstraintName("FK_COBROS_CUOTAS_CLIENTES");
+                .HasConstraintName("FK_CUOTAS_CLIENTES");
+
+            entity.HasOne(d => d.IdDetalleTransaccionNavigation).WithMany(p => p.Cuota)
+                .HasForeignKey(d => d.IdDetalleTransaccion)
+                .HasConstraintName("FK_CUOTAS_DETALLE_TRANSACCIONES");
 
             entity.HasOne(d => d.IdPrestamoNavigation).WithMany(p => p.Cuota)
                 .HasForeignKey(d => d.IdPrestamo)
-                .HasConstraintName("FK_COBROS_CUOTAS_PRESTAMOS");
+                .HasConstraintName("FK_CUOTAS_PRESTAMOS");
+
+            entity.HasOne(d => d.IdTransaccionNavigation).WithMany(p => p.Cuota)
+                .HasForeignKey(d => d.IdTransaccion)
+                .HasConstraintName("FK_CUOTAS_TRANSACCIONES");
         });
 
         modelBuilder.Entity<DetalleTransaccione>(entity =>
@@ -234,14 +244,10 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<HistoricosIndice>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("HISTORICOS_INDICE");
+            entity.ToTable("HISTORICOS_INDICE");
 
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Fecha).HasColumnType("date");
-            entity.Property(e => e.Id)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("id");
             entity.Property(e => e.ValorDolar)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("Valor_dolar");
@@ -304,7 +310,7 @@ public partial class FinanciarTeContext : DbContext
 
         modelBuilder.Entity<Puntaje>(entity =>
         {
-            entity.HasKey(e => e.IdPuntos).HasName("PK_PUNTOS");
+            entity.HasKey(e => e.IdPuntos);
 
             entity.ToTable("PUNTAJES");
 
@@ -413,14 +419,17 @@ public partial class FinanciarTeContext : DbContext
 
             entity.Property(e => e.IdUsuarios).HasColumnName("id_Usuarios");
             entity.Property(e => e.Apellidos).HasMaxLength(500);
+            entity.Property(e => e.Calle).HasMaxLength(500);
+            entity.Property(e => e.Hashpass)
+                .HasMaxLength(70)
+                .HasColumnName("HASHPass");
             entity.Property(e => e.IdTipoUsuario).HasColumnName("id_Tipo_Usuario");
             entity.Property(e => e.Nombres).HasMaxLength(500);
-            entity.Property(e => e.Usuario1)
-                .HasMaxLength(500)
-                .HasColumnName("Usuario");
+            entity.Property(e => e.User).HasMaxLength(500);
 
             entity.HasOne(d => d.IdTipoUsuarioNavigation).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.IdTipoUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_USUARIOS_TIPOS_USUARIOS");
         });
 
@@ -600,6 +609,22 @@ public partial class FinanciarTeContext : DbContext
             entity.Property(e => e.RecaudaciónMensual)
                 .HasColumnType("decimal(38, 2)")
                 .HasColumnName("Recaudación mensual");
+        });
+
+        modelBuilder.Entity<ViewResumenPrestamo>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("view_ResumenPrestamos");
+
+            entity.Property(e => e.CantidadDePrestamos).HasColumnName("Cantidad de Prestamos");
+            entity.Property(e => e.CuotasVencidas).HasColumnName("Cuotas vencidas");
+            entity.Property(e => e.Nombre).HasMaxLength(1002);
+            entity.Property(e => e.PorcentajeCumplCuotas).HasColumnName("Porcentaje Cumpl Cuotas");
+            entity.Property(e => e.PrestamosCancelados).HasColumnName("Prestamos Cancelados");
+            entity.Property(e => e.PrestamosPendientes).HasColumnName("Prestamos Pendientes");
+            entity.Property(e => e.PrestamosRefinanciados).HasColumnName("Prestamos Refinanciados");
+            entity.Property(e => e.TotalDeCuotas).HasColumnName("Total de Cuotas");
         });
 
         modelBuilder.Entity<ViewTransaccionesConDet>(entity =>

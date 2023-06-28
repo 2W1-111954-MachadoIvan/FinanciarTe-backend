@@ -29,5 +29,9 @@ public partial class Cuota
 
     public virtual Cliente? IdClienteNavigation { get; set; }
 
+    public virtual DetalleTransaccione? IdDetalleTransaccionNavigation { get; set; }
+
     public virtual Prestamo? IdPrestamoNavigation { get; set; }
+
+    public virtual Transaccione? IdTransaccionNavigation { get; set; }
 }

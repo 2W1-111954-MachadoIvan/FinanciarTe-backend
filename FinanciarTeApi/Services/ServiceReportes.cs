@@ -13,19 +13,22 @@ namespace FinanciarTeApi.Services
             _context = context;
         }
 
-        public async Task<List<DTOCliente>> GetClientesConMasPrestamos()
+        public async Task<List<DTOResumenPrestamos>> GetResumenPrestamos()
         {
-            var query = _context.ViewClientes
+            var query = _context.ViewResumenPrestamos
                         .AsNoTracking()
-                        .OrderByDescending(g => g.CantidadDePrestamos)
-                        .Take(10)
-                        .Select(g => new DTOCliente
+                        .OrderByDescending(c => c.CantidadDePrestamos)
+                        .Select(g => new DTOResumenPrestamos
                         {
-                            Dni = g.Dni,
-                            Nombres = g.Nombres,
-                            Apellidos = g.Apellidos,
+                            Nombre = g.Nombre,
+                            Cliente = g.Cliente,
                             CantidadDePrestamos = g.CantidadDePrestamos,
-                            Scoring = g.Scoring,
+                            PrestamosPendientes = g.PrestamosPendientes,
+                            PrestamosCancelados = g.PrestamosCancelados,
+                            PrestamosRefinanciados = g.PrestamosRefinanciados,
+                            CuotasVencidas = g.CuotasVencidas,
+                            TotalDeCuotas = g.TotalDeCuotas,
+                            PorcentajeCumplCuotas = g.PorcentajeCumplCuotas
                         });
 
             return await query.ToListAsync();
@@ -55,8 +58,7 @@ namespace FinanciarTeApi.Services
         {
             var query = _context.ViewHistoricoDolaIndices
                         .AsNoTracking()
-                        .OrderByDescending(g => g.Fecha)
-                        .Take(30)
+                        .OrderBy(c => c.Fecha)
                         .Select(g => new DTODolarIndice
                         {
                             Fecha = g.Fecha,
