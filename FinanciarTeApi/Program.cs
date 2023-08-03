@@ -23,6 +23,7 @@ builder.Services.AddScoped<IServiceRegistro, ServiceRegistro>();
 builder.Services.AddScoped<IServiceSecurity, ServiceSecurity>();
 builder.Services.AddScoped<IServiceUsuario, ServiceUsuario>();
 builder.Services.AddScoped<IServiceLogin, ServiceLogin>();
+builder.Services.AddScoped<IServicePuntos, ServicePuntos>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FinanciarTeContext>(x => x.UseSqlServer(connectionString));

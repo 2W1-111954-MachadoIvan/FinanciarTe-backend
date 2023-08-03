@@ -59,7 +59,7 @@ namespace FinanciarTeApi.Controllers
             r.User = comando.User;
             r.Hashpass = ePass;
             r.Activo = true;
-            r.IdTipoUsuario = 1;
+            //r.IdTipoUsuario = comando.tipo;
 
 
             return Ok(await this.servicio.PutUsuario(r));
