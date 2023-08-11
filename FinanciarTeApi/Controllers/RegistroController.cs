@@ -55,11 +55,11 @@ namespace FinanciarTeApi.Controllers
             r.Calle = comando.Calle;
             r.Numero = comando.Numero;
             r.Telefono = comando.Telefono;
+            r.IdTipoUsuario = comando.idTipoUsuario;
             r.Legajo = comando.Legajo;
             r.User = comando.User;
             r.Hashpass = ePass;
             r.Activo = true;
-            //r.IdTipoUsuario = comando.tipo;
 
 
             return Ok(await this.servicio.PutUsuario(r));

@@ -50,7 +50,7 @@ namespace FinanciarTeApi.Services
             }
             resultado.Ok = false;
             resultado.CodigoEstado = 400;
-            resultado.Error = "Ya existe el correo ingresado";
+            resultado.Error = "Ya existe el usuario ingresado";
             return resultado;
 
         }
@@ -96,10 +96,14 @@ namespace FinanciarTeApi.Services
                     usuario.User = u.User;
                     usuario.Nombres = u.Nombres;
                     usuario.Apellidos = u.Apellidos;
+                    usuario.Calle = u.Calle;
+                    usuario.Numero = u.Numero;
+                    usuario.Telefono = u.Telefono;
+                    usuario.Legajo = u.Legajo;
                     usuario.Hashpass = u.Hashpass;
                     context.Update(usuario);
                     await context.SaveChangesAsync(/*this._serviceSecurity.GetUserName() ?? Constantes.DefaultSecurityValues.DefaultUserName*/);
-                    resultado.Ok = false;
+                    resultado.Ok = true;
                     resultado.CodigoEstado = 200;
                     resultado.Error = "Usuario actualizado";
                     return resultado;
